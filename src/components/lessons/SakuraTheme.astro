@@ -1,0 +1,449 @@
+---
+// Sakura Lesson Theme — 春の教学日記
+// 独立视觉设计：樱花粉 + 文楷书法 + 飘落花瓣动画
+
+const PETAL_COUNT = 30;
+const petals = Array.from({ length: PETAL_COUNT }, (_, i) => ({
+  left: Math.random() * 100,
+  delay: Math.random() * 15,
+  duration: 8 + Math.random() * 12,
+  size: 6 + Math.random() * 16,
+  sway: -40 + Math.random() * 80,
+  endRot: Math.random() * 720 - 360,
+  opacity: 0.15 + Math.random() * 0.45,
+  type: Math.floor(Math.random() * 3),
+}));
+---
+
+<!-- Google Fonts: 霞鹜文楷 + 思源宋体 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@300;400;700&family=Noto+Serif+SC:wght@400;700&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="sakura-lesson">
+  <!-- Falling cherry blossom petals -->
+  <div class="sakura-petals" aria-hidden="true">
+    {petals.map((p) => (
+      <div
+        class={`s-petal s-petal-${p.type}`}
+        style={`left:${p.left}%;animation-delay:${p.delay}s;animation-duration:${p.duration}s;width:${p.size}px;height:${p.size}px;--sway:${p.sway}px;--end-rot:${p.endRot}deg;--opacity:${p.opacity}`}
+      />
+    ))}
+  </div>
+
+  <slot />
+</div>
+
+<style is:global>
+/* =========================================
+   Sakura Lesson Theme — 春の教学日記
+   完全独立的视觉设计系统
+   ========================================= */
+
+/* --- Theme Variables --- */
+.sakura-lesson {
+  --s-cream: #FFF8F5;
+  --s-cream-alt: #FFF0EB;
+  --s-pink: #F2B5D4;
+  --s-rose: #D4547A;
+  --s-blush: #FBDCE8;
+  --s-petal: #FFF0F5;
+  --s-plum: #3D2035;
+  --s-mauve: #7A5C6E;
+  --s-muted: #B89DAC;
+  --s-sage: #7BA17B;
+  --s-gold: #C4A35A;
+  --s-font-display: 'LXGW WenKai', 'Noto Serif SC', serif;
+  --s-font-body: 'Noto Serif SC', 'Noto Sans SC', serif;
+}
+
+/* --- Base Reset --- */
+.sakura-lesson {
+  font-family: var(--s-font-body);
+  color: var(--s-plum);
+  background: var(--s-cream);
+  position: relative;
+  min-height: 100vh;
+}
+
+.sakura-lesson ::selection {
+  background-color: var(--s-blush);
+  color: var(--s-plum);
+}
+
+/* =========================================
+   Falling Petals
+   ========================================= */
+
+.sakura-petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.s-petal {
+  position: absolute;
+  top: -20px;
+  animation: sakura-fall linear infinite;
+}
+
+.s-petal-0 {
+  border-radius: 50% 0 50% 50%;
+  background: linear-gradient(135deg, #FFCAD4, #F4A0C0);
+}
+
+.s-petal-1 {
+  border-radius: 50%;
+  background: #FFD5DE;
+}
+
+.s-petal-2 {
+  border-radius: 50% 50% 20% 50%;
+  background: linear-gradient(135deg, #FFE0E8, #F2B5D4);
+}
+
+@keyframes sakura-fall {
+  0% {
+    transform: translateY(-5vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: var(--opacity);
+  }
+  25% {
+    transform: translateY(25vh) translateX(var(--sway)) rotate(calc(var(--end-rot) * 0.25));
+  }
+  50% {
+    transform: translateY(50vh) translateX(calc(var(--sway) * -0.6)) rotate(calc(var(--end-rot) * 0.5));
+  }
+  75% {
+    transform: translateY(75vh) translateX(calc(var(--sway) * 0.3)) rotate(calc(var(--end-rot) * 0.75));
+  }
+  95% {
+    opacity: var(--opacity);
+  }
+  100% {
+    transform: translateY(105vh) translateX(calc(var(--sway) * -0.2)) rotate(var(--end-rot));
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   Hero Section
+   ========================================= */
+
+.sakura-hero {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+  background:
+    radial-gradient(ellipse at 25% 20%, rgba(242, 181, 212, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 75% 70%, rgba(242, 181, 212, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #FFF8F5 0%, #FFE4EC 45%, #FFF0EB 100%);
+}
+
+.sakura-hero-inner {
+  position: relative;
+  z-index: 2;
+  animation: sakura-hero-enter 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes sakura-hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sakura-date {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--s-muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5rem;
+  font-family: var(--s-font-body);
+}
+
+.sakura-title {
+  font-family: var(--s-font-display);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 400;
+  color: var(--s-plum);
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: 0.08em;
+}
+
+.sakura-subtitle {
+  font-style: italic;
+  color: var(--s-mauve);
+  font-size: 1.125rem;
+  margin-top: 1rem;
+  font-family: var(--s-font-body);
+}
+
+/* Decorative branch SVG in hero corner */
+.sakura-hero-branch {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(120px, 20vw, 240px);
+  height: auto;
+  opacity: 0.12;
+  z-index: 1;
+}
+
+.sakura-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  color: var(--s-muted);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  animation: bounce-gentle 2.5s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* =========================================
+   Content Body — Typography & Layout
+   ========================================= */
+
+.sakura-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Headings */
+.sakura-body h2 {
+  font-family: var(--s-font-display);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--s-rose);
+  margin: 3rem 0 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--s-blush);
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.sakura-body h3 {
+  font-family: var(--s-font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--s-plum);
+  margin: 2rem 0 0.75rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* Paragraphs */
+.sakura-body p {
+  font-size: 1.0625rem;
+  line-height: 2;
+  margin-bottom: 1.25rem;
+}
+
+/* Lists */
+.sakura-body ul,
+.sakura-body ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.sakura-body li {
+  margin-bottom: 0.5rem;
+  line-height: 1.9;
+}
+
+.sakura-body li::marker {
+  color: var(--s-pink);
+}
+
+.sakura-body ol li::marker {
+  color: var(--s-rose);
+  font-weight: 600;
+}
+
+/* Inline styles */
+.sakura-body strong {
+  color: var(--s-rose);
+  font-weight: 600;
+}
+
+.sakura-body em {
+  color: var(--s-mauve);
+}
+
+/* Blockquote */
+.sakura-body blockquote {
+  border-left: 3px solid var(--s-pink);
+  background: var(--s-petal);
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: var(--s-mauve);
+  line-height: 1.9;
+}
+
+.sakura-body blockquote p {
+  margin-bottom: 0;
+}
+
+/* Horizontal rule */
+.sakura-body hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--s-pink) 50%, transparent 100%);
+  margin: 3rem 0;
+}
+
+/* Links */
+.sakura-body a {
+  color: var(--s-rose);
+  text-decoration: underline;
+  text-decoration-color: var(--s-blush);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+
+.sakura-body a:hover {
+  text-decoration-color: var(--s-rose);
+}
+
+/* =========================================
+   Special Elements
+   ========================================= */
+
+/* Tip/Callout Box */
+.sakura-tip {
+  background: linear-gradient(135deg, var(--s-petal), var(--s-cream));
+  border: 1px solid var(--s-blush);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.sakura-tip-title {
+  font-family: var(--s-font-display);
+  font-size: 0.9375rem;
+  color: var(--s-rose);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.06em;
+}
+
+.sakura-tip p {
+  font-size: 0.9375rem;
+  margin-bottom: 0;
+  line-height: 1.8;
+}
+
+/* Ornament dots */
+.sakura-ornament {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 3rem 0 1rem;
+}
+
+.sakura-ornament span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--s-pink);
+  opacity: 0.6;
+}
+
+/* Back link */
+.sakura-back {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--s-blush);
+}
+
+.sakura-back a {
+  color: var(--s-muted) !important;
+  text-decoration: none !important;
+  font-size: 0.875rem;
+  font-family: var(--s-font-body);
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+.sakura-back a:hover {
+  color: var(--s-rose) !important;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 640px) {
+  .sakura-hero {
+    min-height: 70vh;
+    padding: 1.5rem;
+  }
+
+  .sakura-body {
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  .sakura-body h2 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .sakura-body h3 {
+    font-size: 1.125rem;
+  }
+
+  .sakura-tip {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* =========================================
+   Accessibility: Reduced Motion
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .s-petal {
+    animation: none !important;
+    display: none;
+  }
+
+  .sakura-scroll-hint {
+    animation: none;
+  }
+
+  .sakura-hero-inner {
+    animation: none;
+  }
+}
+</style>
