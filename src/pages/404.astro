@@ -5,26 +5,34 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 <BaseLayout title="页面未找到">
   <div class="max-w-6xl mx-auto px-[--spacing-page] py-32 text-center">
     <div class="max-w-sm mx-auto">
-      <!-- Shuttlecock out of bounds illustration -->
-      <div class="relative w-24 h-24 mx-auto mb-8">
-        <div class="absolute inset-0 rounded-full bg-court-50 animate-pulse"></div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="text-court rotate-[-20deg]">
-            <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M12 10L12 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M8 15L16 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
+      <!-- 占位插画：等手绘"飞出界的球" SVG 交付后替换 -->
+      <div class="relative w-48 h-36 mx-auto mb-10">
+        <svg width="192" height="144" viewBox="0 0 192 144" fill="none" class="w-full h-full">
+          <!-- 球场边线 -->
+          <path d="M10 130 L80 130" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6 4" stroke-linecap="round"/>
+          <path d="M80 130 L80 90" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6 4" stroke-linecap="round"/>
+          <!-- 飞行弧线 -->
+          <path d="M60 120 Q100 60 160 30" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round" opacity="0.5"/>
+          <!-- 羽毛球 -->
+          <circle cx="160" cy="30" r="8" stroke="#3f3a36" stroke-width="1.5"/>
+          <path d="M160 38 L160 54" stroke="#3f3a36" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M155 44 L165 44" stroke="#3f3a36" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- 速度线 -->
+          <path d="M140 38 L148 34" stroke="#3f3a36" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+          <path d="M145 45 L150 40" stroke="#3f3a36" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+          <!-- OUT 标记 -->
+          <text x="85" y="126" fill="#F59E0B" font-size="11" font-weight="700" font-family="system-ui">OUT!</text>
+        </svg>
       </div>
 
-      <p class="font-brand text-6xl text-court-dark mb-4">404</p>
-      <h1 class="font-heading text-xl font-semibold text-ink mb-3">球出界了</h1>
+      <p class="font-display text-6xl text-court mb-4">404</p>
+      <h1 class="text-xl font-bold text-ink mb-3">球出界了</h1>
       <p class="text-sm text-ink-muted mb-8 leading-relaxed">
-        这个页面不存在，可能已经被移动或删除。
+        这个页面飞到了场外，可能已经被移动或删除。
       </p>
       <a
         href="/"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-court text-paper text-sm font-medium rounded-lg hover:bg-court-light transition-colors"
+        class="squircle inline-flex items-center gap-2 px-6 py-3 bg-court text-white text-sm font-medium rounded-xl hover:bg-court-dark hover:-translate-y-0.5 transition-all duration-200"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M19 12H5M5 12L12 19M5 12L12 5"/>

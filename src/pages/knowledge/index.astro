@@ -4,10 +4,10 @@ import { getCollection } from 'astro:content';
 
 const allKnowledge = await getCollection('knowledge', ({ data }) => !data.draft);
 
-const categoryMeta: Record<string, { label: string; en: string }> = {
-  strokes: { label: '手法', en: 'Strokes' },
-  footwork: { label: '步法', en: 'Footwork' },
-  'sports-science': { label: '运动科学', en: 'Sports Science' },
+const categoryMeta: Record<string, { label: string; en: string; color: string }> = {
+  strokes: { label: '手法', en: 'Strokes', color: '#10B981' },
+  footwork: { label: '步法', en: 'Footwork', color: '#F59E0B' },
+  'sports-science': { label: '运动科学', en: 'Sports Science', color: '#FB7185' },
 };
 
 const grouped = Object.entries(categoryMeta).map(([key, meta]) => ({
@@ -26,10 +26,12 @@ const formatDate = (date: Date) =>
   <div class="max-w-6xl mx-auto px-[--spacing-page] py-12 md:py-20">
     <!-- Header -->
     <div class="mb-14">
-      <span class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium fade-in-up">Knowledge Base</span>
-      <h1 class="font-heading text-3xl md:text-4xl font-bold text-court-dark mt-2 mb-4 fade-in-up" style="transition-delay:80ms">
+      <h1 class="heading-display text-ink mb-3 fade-in-up">
         知识库
       </h1>
+      <p class="text-xs uppercase tracking-[0.2em] text-court font-medium mb-4 fade-in-up" style="transition-delay:80ms">
+        Knowledge Base
+      </p>
       <p class="text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
         系统化的羽毛球技术知识，从基础握拍到高级战术，从步法启动到运动科学。
       </p>
@@ -38,38 +40,51 @@ const formatDate = (date: Date) =>
     <!-- Category sections -->
     {grouped.map((group, gi) => (
       <section class="mb-16 fade-in-up" style={`transition-delay:${(gi + 1) * 120}ms`} id={group.key}>
-        <div class="flex items-baseline gap-3 mb-6 pb-3 border-b border-paper-dark/60">
-          <h2 class="font-heading text-xl font-semibold text-ink">{group.label}</h2>
+        <div class="flex items-center gap-3 mb-6">
+          {/* 左侧彩色粗竖线 */}
+          <div class="w-1 h-8 rounded-full" style={`background-color: ${group.color}`}></div>
+          <h2 class="text-xl font-bold text-ink">{group.label}</h2>
           <span class="text-xs text-ink-muted tracking-wide">{group.en}</span>
           <span class="ml-auto text-xs text-ink-muted">{group.articles.length} 篇</span>
         </div>
 
         {group.articles.length > 0 ? (
-          <div class="grid gap-4">
-            {group.articles.map((article) => (
-              <a
-                href={`/knowledge/${article.id}/`}
-                class="group flex items-start gap-5 p-5 rounded-xl border border-transparent hover:border-paper-dark/60 hover:bg-paper-warm/30 transition-all duration-200"
-              >
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-heading text-base font-semibold text-ink group-hover:text-court transition-colors mb-1.5">
-                    {article.data.title}
-                  </h3>
-                  <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
-                    {article.data.description}
-                  </p>
-                </div>
-                <div class="flex-shrink-0 flex flex-col items-end gap-2">
-                  <time class="text-xs text-ink-muted whitespace-nowrap">{formatDate(article.data.publishDate)}</time>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-ink-muted/40 group-hover:text-court transition-colors">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
-                  </svg>
-                </div>
-              </a>
+          <div class="grid gap-0">
+            {group.articles.map((article, ai) => (
+              <div>
+                <a
+                  href={`/knowledge/${article.id}/`}
+                  class="squircle group flex items-start gap-5 p-5 rounded-xl border border-transparent hover:border-paper-dark hover:bg-paper-dark/30 transition-all duration-200"
+                >
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-base font-bold text-ink group-hover:text-court transition-colors mb-1.5">
+                      {article.data.title}
+                    </h3>
+                    <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
+                      {article.data.description}
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                    <time class="text-xs text-ink-muted whitespace-nowrap">{formatDate(article.data.publishDate)}</time>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-ink-muted/30 group-hover:text-court transition-colors">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
+                    </svg>
+                  </div>
+                </a>
+                {/* 文章间手绘虚线分隔 */}
+                {ai < group.articles.length - 1 && (
+                  <div class="mx-5 border-b border-dashed border-ink-muted/15"></div>
+                )}
+              </div>
             ))}
           </div>
         ) : (
           <p class="text-sm text-ink-muted py-8 text-center">内容即将更新，敬请期待</p>
+        )}
+
+        {/* 手绘风虚线分隔 */}
+        {gi < grouped.length - 1 && (
+          <div class="divider-wavy mt-10"></div>
         )}
       </section>
     ))}

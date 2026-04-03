@@ -1,40 +1,65 @@
 @import "tailwindcss";
 
 /* ============================================
-   Shuttle Path — "Ink & Court" Design System
+   Shuttle Path — "Rally + Smash" Design System
+   活力运动 + 手绘插画风
    ============================================ */
+
+/* --- Smiley Sans (得意黑) --- */
+@font-face {
+  font-family: 'Smiley Sans';
+  src: url('/fonts/SmileySans-Oblique.woff2') format('woff2');
+  font-weight: normal;
+  font-style: oblique;
+  font-display: swap;
+}
 
 @theme {
   /* --- Color Palette --- */
-  --color-ink: #1a1a17;
-  --color-ink-light: #4a4a45;
-  --color-ink-muted: #9e9a90;
 
-  --color-paper: #faf7f2;
-  --color-paper-warm: #f0ece3;
-  --color-paper-dark: #e5e0d6;
+  /* 文字色 */
+  --color-ink: #1F2937;
+  --color-ink-light: #374151;
+  --color-ink-muted: #9CA3AF;
 
-  --color-court: #1b4332;
-  --color-court-light: #2d6a4f;
-  --color-court-dark: #0d2818;
-  --color-court-50: #edf5f0;
-  --color-court-100: #d1e7d9;
+  /* 背景色 */
+  --color-paper: #FFFFFF;
+  --color-paper-warm: #FEFCF8;
+  --color-paper-dark: #F3F4F6;
 
-  --color-shuttle: #c4853c;
-  --color-shuttle-light: #daa06d;
-  --color-shuttle-50: #fdf5ec;
+  /* 主题色：活力绿 */
+  --color-court: #10B981;
+  --color-court-light: #34D399;
+  --color-court-dark: #059669;
+  --color-court-50: #ECFDF5;
+  --color-court-100: #D1FAE5;
+
+  /* 活力色：阳光橙 */
+  --color-shuttle: #F59E0B;
+  --color-shuttle-light: #FBBF24;
+  --color-shuttle-50: #FFFBEB;
+
+  /* 点缀色 */
+  --color-coral: #FB7185;
+  --color-lemon: #FCD34D;
+
+  /* 手绘线条色 */
+  --color-sketch: #3f3a36;
+  --color-sketch-light: #9e9890;
 
   /* --- Typography --- */
-  --font-brand: "Instrument Serif", "Noto Serif SC", "Songti SC", "SimSun", serif;
-  --font-heading: "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", serif;
-  --font-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  --font-display: 'Smiley Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --font-heading: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
 
   /* --- Spacing Scale --- */
   --spacing-page: clamp(1.5rem, 5vw, 6rem);
 
   /* --- Transitions --- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* ============================================
@@ -55,10 +80,19 @@
     line-height: 1.75;
   }
 
-  /* Heading typography */
+  /* Heading typography — 无衬线 + 粗重 */
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
-    line-height: 1.3;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  /* Display headings — 得意黑 */
+  .heading-display {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1.05;
     letter-spacing: -0.01em;
   }
 
@@ -70,43 +104,89 @@
 
   /* Scrollbar styling */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--color-paper);
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-paper-dark);
-    border-radius: 4px;
+    background: var(--color-ink-muted);
+    border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-ink-muted);
+    background: var(--color-ink-light);
   }
 }
 
 /* ============================================
-   Scroll-triggered Animations
+   Noise Texture Overlay (纸质颗粒感)
+   ============================================ */
+
+.surface-grain {
+  position: relative;
+}
+
+.surface-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================
+   Squircle (超椭圆) — 渐进增强
+   ============================================ */
+
+@supports (corner-shape: squircle) {
+  .squircle {
+    corner-shape: squircle;
+  }
+}
+
+/* ============================================
+   Scroll-triggered Animations (加速版)
    ============================================ */
 
 @layer utilities {
   .fade-in-up {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s var(--ease-out-expo),
-                transform 0.7s var(--ease-out-expo);
+    transform: translateY(20px);
+    transition: opacity 0.4s var(--ease-out-expo),
+                transform 0.4s var(--ease-out-expo);
   }
   .fade-in-up.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  /* Stagger children */
+  /* Stagger children — 更密集 */
   .stagger-children > .fade-in-up:nth-child(1) { transition-delay: 0ms; }
-  .stagger-children > .fade-in-up:nth-child(2) { transition-delay: 100ms; }
-  .stagger-children > .fade-in-up:nth-child(3) { transition-delay: 200ms; }
-  .stagger-children > .fade-in-up:nth-child(4) { transition-delay: 300ms; }
-  .stagger-children > .fade-in-up:nth-child(5) { transition-delay: 400ms; }
-  .stagger-children > .fade-in-up:nth-child(6) { transition-delay: 500ms; }
+  .stagger-children > .fade-in-up:nth-child(2) { transition-delay: 80ms; }
+  .stagger-children > .fade-in-up:nth-child(3) { transition-delay: 160ms; }
+  .stagger-children > .fade-in-up:nth-child(4) { transition-delay: 240ms; }
+  .stagger-children > .fade-in-up:nth-child(5) { transition-delay: 320ms; }
+  .stagger-children > .fade-in-up:nth-child(6) { transition-delay: 400ms; }
+}
+
+/* ============================================
+   Card Micro-rotation (微旋转，散落桌面感)
+   ============================================ */
+
+.card-tilted:nth-child(3n+1) { transform: rotate(-0.8deg); }
+.card-tilted:nth-child(3n+2) { transform: rotate(0.5deg); }
+.card-tilted:nth-child(3n+3) { transform: rotate(1.2deg); }
+
+.card-tilted {
+  transition: transform 0.3s var(--ease-spring),
+              box-shadow 0.3s var(--ease-smooth);
+}
+
+.card-tilted:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 /* ============================================
@@ -120,26 +200,27 @@
 }
 
 .prose-knowledge h1 {
+  font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 700;
   margin-top: 0;
   margin-bottom: 1rem;
-  color: var(--color-court-dark);
+  color: var(--color-ink);
 }
 
 .prose-knowledge h2 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--color-paper-dark);
-  color: var(--color-court);
+  border-bottom: 2px solid var(--color-court-100);
+  color: var(--color-ink);
 }
 
 .prose-knowledge h3 {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
   color: var(--color-ink);
@@ -159,12 +240,12 @@
 }
 
 .prose-knowledge li::marker {
-  color: var(--color-court-light);
+  color: var(--color-court);
 }
 
 .prose-knowledge strong {
-  font-weight: 600;
-  color: var(--color-court-dark);
+  font-weight: 700;
+  color: var(--color-ink);
 }
 
 .prose-knowledge blockquote {
@@ -180,16 +261,16 @@
 .prose-knowledge code {
   font-family: var(--font-mono);
   font-size: 0.875em;
-  background-color: var(--color-paper-warm);
+  background-color: var(--color-paper-dark);
   padding: 0.15em 0.4em;
   border-radius: 4px;
 }
 
 .prose-knowledge pre {
-  background-color: var(--color-court-dark);
+  background-color: #1F2937;
   color: #e0e0e0;
   padding: 1.25rem;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow-x: auto;
   margin: 1.5rem 0;
 }
@@ -240,12 +321,12 @@
 }
 
 .prose-knowledge img {
-  border-radius: 8px;
+  border-radius: 12px;
   margin: 1.5rem 0;
 }
 
 /* ============================================
-   Utility: Nav Link Underline Animation
+   Nav Link Underline (活力绿色条)
    ============================================ */
 
 .nav-link {
@@ -259,12 +340,43 @@
   bottom: -2px;
   left: 0;
   width: 0;
-  height: 1.5px;
+  height: 2px;
   background-color: var(--color-court);
-  transition: width 0.3s var(--ease-out-expo);
+  border-radius: 1px;
+  transition: width 0.25s var(--ease-out-expo);
 }
 
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
+}
+
+/* ============================================
+   Hand-drawn Border Filter (手绘毛边效果)
+   ============================================ */
+
+.hand-drawn-filter {
+  filter: url(#squiggle-filter);
+}
+
+/* ============================================
+   Wavy Divider (手绘波浪分隔线 — 占位)
+   ============================================ */
+
+.divider-wavy {
+  width: 100%;
+  height: 12px;
+  opacity: 0.2;
+  background: none;
+  position: relative;
+}
+
+.divider-wavy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='400' height='12' viewBox='0 0 400 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 6 Q25 2 50 6 T100 6 T150 6 T200 6 T250 6 T300 6 T350 6 T400 6' stroke='%233f3a36' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 400px 12px;
+  background-position: center;
 }

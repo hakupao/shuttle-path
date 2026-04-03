@@ -8,31 +8,30 @@ const links = [
 ];
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-paper/85 border-b border-paper-dark/50">
+<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-paper-dark">
   <nav class="max-w-6xl mx-auto px-[--spacing-page] flex items-center justify-between h-16">
     <!-- Brand -->
     <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-8 h-8 rounded-full bg-court flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-paper">
-          <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="2"/>
-          <path d="M12 10 L12 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M8 14 L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <span class="font-brand text-xl tracking-tight text-court-dark">
+      <!-- 占位 Logo：等手绘 SVG 交付后替换 -->
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" class="text-court transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
+        <circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 13 L12 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M7 19 L17 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="font-display text-xl text-ink">
         Shuttle Path
       </span>
     </a>
 
     <!-- Desktop Links -->
-    <div class="hidden md:flex items-center gap-8">
+    <div class="hidden md:flex items-center gap-10">
       {links.map((link) => (
         <a
           href={link.href}
           class:list={[
-            'nav-link text-sm tracking-wide transition-colors duration-200',
+            'nav-link text-sm font-medium tracking-wide transition-colors duration-200',
             pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-              ? 'text-court font-medium active'
+              ? 'text-court active'
               : 'text-ink-light hover:text-court',
           ]}
         >
@@ -61,14 +60,14 @@ const links = [
     class="md:hidden overflow-hidden transition-all duration-400 ease-[--ease-out-expo]"
     style="max-height: 0;"
   >
-    <div class="px-[--spacing-page] pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark/50">
+    <div class="px-[--spacing-page] pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark">
       {links.map((link) => (
         <a
           href={link.href}
           class:list={[
-            'block py-3 px-4 rounded-lg text-sm transition-colors duration-200',
+            'squircle block py-3 px-4 rounded-xl text-sm font-medium transition-colors duration-200',
             pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-              ? 'text-court font-medium bg-court-50'
+              ? 'text-court bg-court-50'
               : 'text-ink-light hover:text-court hover:bg-court-50/50',
           ]}
         >

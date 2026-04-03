@@ -21,10 +21,20 @@ const fullTitle = title === '首页' ? 'Shuttle Path — 羽毛球教学知识�
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/fonts/SmileySans-Oblique.woff2" as="font" type="font/woff2" crossorigin />
     <title>{fullTitle}</title>
   </head>
   <body class="min-h-screen flex flex-col">
+    <!-- Global SVG filters (手绘毛边效果) -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+      <defs>
+        <filter id="squiggle-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="4" seed="1" />
+          <feDisplacementMap in="SourceGraphic" scale="3" />
+        </filter>
+      </defs>
+    </svg>
     <Nav />
     <main class="flex-1 pt-16">
       <slot />

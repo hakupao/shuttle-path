@@ -2,56 +2,49 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-paper-dark/60 bg-paper-warm/40">
-  <div class="max-w-6xl mx-auto px-[--spacing-page] py-12">
-    <!-- Top section -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-10">
-      <!-- Brand -->
-      <div>
-        <a href="/" class="font-brand text-lg text-court-dark hover:text-court transition-colors">
-          Shuttle Path
-        </a>
-        <p class="text-sm text-ink-muted mt-1.5 max-w-xs leading-relaxed">
-          一个羽毛球爱好者的教学笔记与知识库
-        </p>
-      </div>
+<footer class="bg-paper-dark/50 relative overflow-hidden">
+  <!-- 装饰碎片 — 占位，等手绘 SVG 交付后替换 -->
+  <svg class="absolute top-6 right-[10%] opacity-[0.06] rotate-12" width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <path d="M16 4 Q20 12 28 16 Q20 18 16 28 Q14 18 4 16 Q14 12 16 4Z" stroke="#3f3a36" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>
+  <svg class="absolute bottom-10 left-[8%] opacity-[0.05] -rotate-[20deg]" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M12 2 Q15 8 22 12 Q15 14 12 22 Q10 14 2 12 Q10 8 12 2Z" stroke="#3f3a36" stroke-width="1" stroke-linecap="round"/>
+  </svg>
 
-      <!-- Links -->
-      <div class="flex gap-10 text-sm">
-        <div class="flex flex-col gap-2">
-          <span class="text-ink-muted text-xs uppercase tracking-widest mb-1">内容</span>
-          <a href="/knowledge/" class="text-ink-light hover:text-court transition-colors">知识库</a>
-          <a href="/lessons/" class="text-ink-light hover:text-court transition-colors">教学日记</a>
-        </div>
-        <div class="flex flex-col gap-2">
-          <span class="text-ink-muted text-xs uppercase tracking-widest mb-1">更多</span>
-          <a href="https://github.com/hakupao" target="_blank" rel="noopener noreferrer" class="text-ink-light hover:text-court transition-colors inline-flex items-center gap-1.5">
-            GitHub
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50">
-              <path d="M7 17L17 7M17 7H7M17 7V17"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+  <div class="max-w-6xl mx-auto px-[--spacing-page] pt-12 pb-8 relative">
+    <!-- Wavy divider -->
+    <div class="divider-wavy mb-10"></div>
+
+    <!-- Main content — single column centered -->
+    <div class="text-center mb-8">
+      <a href="/" class="font-display text-lg text-ink hover:text-court transition-colors inline-block mb-3">
+        Shuttle Path
+      </a>
+      <p class="text-sm text-ink-muted max-w-xs mx-auto leading-relaxed">
+        一个羽毛球爱好者的教学笔记与知识库
+      </p>
     </div>
 
-    <!-- Divider with decorative element -->
-    <div class="flex items-center gap-4 mb-6">
-      <div class="h-px flex-1 bg-paper-dark/60"></div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-ink-muted/40">
-        <circle cx="12" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M12 9L12 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        <path d="M9 13L15 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      <div class="h-px flex-1 bg-paper-dark/60"></div>
+    <!-- Links — single row -->
+    <div class="flex items-center justify-center gap-2 text-sm text-ink-muted mb-8">
+      <a href="/knowledge/" class="hover:text-court transition-colors">知识库</a>
+      <span class="text-ink-muted/40">·</span>
+      <a href="/lessons/" class="hover:text-court transition-colors">教学日记</a>
+      <span class="text-ink-muted/40">·</span>
+      <a href="https://github.com/hakupao" target="_blank" rel="noopener noreferrer" class="hover:text-court transition-colors inline-flex items-center gap-1">
+        GitHub
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="opacity-40">
+          <path d="M7 17L17 7M17 7H7M17 7V17"/>
+        </svg>
+      </a>
     </div>
 
     <!-- Bottom -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-muted">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-ink-muted/60">
       <p>&copy; {year} Shuttle Path</p>
       <p>
         Made with
-        <span class="inline-block mx-0.5" aria-label="heart">&#9829;</span>
+        <span class="inline-block mx-0.5 text-coral" aria-label="heart">&#9829;</span>
         by <a href="https://github.com/hakupao" target="_blank" rel="noopener noreferrer" class="hover:text-court transition-colors">hakupao</a>
       </p>
     </div>
