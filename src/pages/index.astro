@@ -1,0 +1,204 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allKnowledge = await getCollection('knowledge', ({ data }) => !data.draft);
+const allLessons = await getCollection('lessons', ({ data }) => !data.draft);
+
+const recentLessons = allLessons
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const categories = [
+  {
+    key: 'strokes',
+    label: '手法',
+    en: 'Strokes',
+    description: '握拍、发球、后场、前场、中场技术',
+    icon: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 24 L16 4 L18 4 L14 16 L24 12"/><circle cx="24" cy="12" r="3"/></svg>`,
+    count: allKnowledge.filter((a) => a.data.category === 'strokes').length,
+  },
+  {
+    key: 'footwork',
+    label: '步法',
+    en: 'Footwork',
+    description: '站位、启动、上网、后退、全场串联',
+    icon: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 28 L10 20 L16 14 L22 20 L22 28"/><circle cx="16" cy="8" r="4"/></svg>`,
+    count: allKnowledge.filter((a) => a.data.category === 'footwork').length,
+  },
+  {
+    key: 'sports-science',
+    label: '运动科学',
+    en: 'Sports Science',
+    description: '热身放松、发力原理、体能训练、伤病预防',
+    icon: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 16 L10 10 L16 16 L22 6 L26 12"/><line x1="6" y1="26" x2="26" y2="26"/></svg>`,
+    count: allKnowledge.filter((a) => a.data.category === 'sports-science').length,
+  },
+];
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<BaseLayout title="首页">
+  <!-- ====== HERO ====== -->
+  <section class="relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute inset-0 pointer-events-none">
+      <!-- Court lines abstraction -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] border border-court/[0.06] rounded-[2px]"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[500px] border-x border-court/[0.06]"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[800px] h-0 border-t border-court/[0.06]"></div>
+      <!-- Gradient overlay -->
+      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-paper to-transparent"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-[--spacing-page] pt-24 md:pt-36 pb-20 md:pb-28 relative">
+      <div class="max-w-2xl">
+        <!-- Accent line -->
+        <div class="w-12 h-0.5 bg-shuttle mb-8 fade-in-up"></div>
+
+        <h1 class="font-brand text-4xl sm:text-5xl md:text-6xl text-court-dark leading-[1.15] mb-6 fade-in-up" style="transition-delay:80ms">
+          Shuttle Path
+        </h1>
+
+        <p class="text-lg md:text-xl text-ink-light leading-relaxed mb-4 fade-in-up" style="transition-delay:160ms">
+          羽毛球教学知识平台
+        </p>
+
+        <p class="text-base text-ink-muted leading-relaxed max-w-lg mb-10 fade-in-up" style="transition-delay:240ms">
+          从握拍到杀球，从站位到全场步法——系统化的羽毛球知识库与教学日记，帮助你建立完整的技术体系。
+        </p>
+
+        <div class="flex flex-wrap gap-4 fade-in-up" style="transition-delay:320ms">
+          <a
+            href="/knowledge/"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-court text-paper text-sm font-medium rounded-lg hover:bg-court-light transition-colors duration-200"
+          >
+            浏览知识库
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
+            </svg>
+          </a>
+          <a
+            href="/lessons/"
+            class="inline-flex items-center gap-2 px-6 py-3 text-court text-sm font-medium rounded-lg border border-court/20 hover:bg-court-50 transition-colors duration-200"
+          >
+            教学日记
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== KNOWLEDGE CATEGORIES ====== -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-6xl mx-auto px-[--spacing-page]">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <span class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium fade-in-up">Knowledge Base</span>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-court-dark mt-2 fade-in-up" style="transition-delay:80ms">
+            知识库
+          </h2>
+        </div>
+        <a href="/knowledge/" class="text-sm text-ink-muted hover:text-court transition-colors hidden sm:inline-flex items-center gap-1 fade-in-up">
+          查看全部
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12H19M19 12L12 5M19 12L12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 stagger-children">
+        {categories.map((cat) => (
+          <a
+            href={`/knowledge/?category=${cat.key}`}
+            class="fade-in-up group relative p-8 rounded-2xl border border-paper-dark/60 bg-paper hover:border-court/30 hover:shadow-lg hover:shadow-court/[0.04] transition-all duration-300"
+          >
+            <!-- Icon -->
+            <div class="w-14 h-14 rounded-xl bg-court-50 flex items-center justify-center text-court mb-5 group-hover:bg-court group-hover:text-paper transition-colors duration-300">
+              <Fragment set:html={cat.icon} />
+            </div>
+
+            <div class="flex items-baseline gap-3 mb-2">
+              <h3 class="font-heading text-xl font-semibold text-ink">{cat.label}</h3>
+              <span class="text-xs text-ink-muted tracking-wide">{cat.en}</span>
+            </div>
+
+            <p class="text-sm text-ink-muted leading-relaxed mb-4">{cat.description}</p>
+
+            <span class="text-xs text-ink-muted">
+              {cat.count > 0 ? `${cat.count} 篇文章` : '即将更新'}
+            </span>
+
+            <!-- Hover arrow -->
+            <div class="absolute top-8 right-8 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-court">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12H19M19 12L12 5M19 12L12 19"/></svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RECENT LESSONS ====== -->
+  {recentLessons.length > 0 && (
+    <section class="py-16 md:py-24 bg-paper-warm/40">
+      <div class="max-w-6xl mx-auto px-[--spacing-page]">
+        <div class="flex items-end justify-between mb-12">
+          <div>
+            <span class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium fade-in-up">Lessons</span>
+            <h2 class="font-heading text-2xl md:text-3xl font-bold text-court-dark mt-2 fade-in-up" style="transition-delay:80ms">
+              最新教学日记
+            </h2>
+          </div>
+          <a href="/lessons/" class="text-sm text-ink-muted hover:text-court transition-colors hidden sm:inline-flex items-center gap-1 fade-in-up">
+            查看全部
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12H19M19 12L12 5M19 12L12 19"/></svg>
+          </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 stagger-children">
+          {recentLessons.map((lesson) => (
+            <a
+              href={`/lessons/${lesson.id}/`}
+              class="fade-in-up group block rounded-2xl overflow-hidden border border-paper-dark/60 bg-paper hover:shadow-lg hover:shadow-court/[0.04] transition-all duration-300"
+            >
+              <!-- Color banner -->
+              <div
+                class="h-2 transition-all duration-300 group-hover:h-3"
+                style={`background-color: ${lesson.data.coverColor || '#1b4332'}`}
+              />
+              <div class="p-7">
+                <time class="text-xs text-ink-muted">{formatDate(lesson.data.date)}</time>
+                <h3 class="font-heading text-lg font-semibold text-ink mt-2 mb-2 group-hover:text-court transition-colors">
+                  {lesson.data.title}
+                </h3>
+                {lesson.data.description && (
+                  <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">{lesson.data.description}</p>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ====== CTA / ABOUT TEASER ====== -->
+  <section class="py-20 md:py-28">
+    <div class="max-w-6xl mx-auto px-[--spacing-page] text-center">
+      <div class="max-w-md mx-auto fade-in-up">
+        <div class="w-10 h-10 rounded-full bg-court-50 flex items-center justify-center mx-auto mb-6">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-court">
+            <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 10L12 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 15L16 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="text-ink-muted leading-relaxed text-sm">
+          Shuttle Path 是一个持续更新的羽毛球教学知识平台。<br class="hidden sm:block" />
+          这里记录着每一次训练的思考与沉淀。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

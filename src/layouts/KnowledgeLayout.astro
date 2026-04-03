@@ -1,0 +1,71 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  category: string;
+  publishDate: Date;
+  updateDate?: Date;
+}
+
+const { title, description, category, publishDate, updateDate } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  strokes: '手法',
+  footwork: '步法',
+  'sports-science': '运动科学',
+};
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="max-w-3xl mx-auto px-[--spacing-page] py-12 md:py-20">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-ink-muted mb-8">
+      <a href="/knowledge/" class="hover:text-court transition-colors">知识库</a>
+      <span class="text-paper-dark">/</span>
+      <a href={`/knowledge/?category=${category}`} class="hover:text-court transition-colors">
+        {categoryLabels[category] || category}
+      </a>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="mb-10">
+      <h1 class="font-heading text-3xl md:text-4xl font-bold text-court-dark leading-tight mb-4">
+        {title}
+      </h1>
+      <p class="text-ink-light text-lg leading-relaxed mb-5">
+        {description}
+      </p>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-ink-muted">
+        <time datetime={publishDate.toISOString()}>
+          {formatDate(publishDate)}
+        </time>
+        {updateDate && (
+          <span class="flex items-center gap-1">
+            · 更新于 <time datetime={updateDate.toISOString()}>{formatDate(updateDate)}</time>
+          </span>
+        )}
+      </div>
+      <div class="mt-6 h-px bg-gradient-to-r from-court/30 via-paper-dark/60 to-transparent"></div>
+    </header>
+
+    <!-- Article Body -->
+    <div class="prose-knowledge">
+      <slot />
+    </div>
+
+    <!-- Bottom divider -->
+    <div class="mt-16 pt-8 border-t border-paper-dark/60">
+      <a href="/knowledge/" class="text-sm text-ink-muted hover:text-court transition-colors inline-flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
+        </svg>
+        返回知识库
+      </a>
+    </div>
+  </article>
+</BaseLayout>

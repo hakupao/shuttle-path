@@ -1,0 +1,59 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-paper-dark/60 bg-paper-warm/40">
+  <div class="max-w-6xl mx-auto px-[--spacing-page] py-12">
+    <!-- Top section -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-10">
+      <!-- Brand -->
+      <div>
+        <a href="/" class="font-brand text-lg text-court-dark hover:text-court transition-colors">
+          Shuttle Path
+        </a>
+        <p class="text-sm text-ink-muted mt-1.5 max-w-xs leading-relaxed">
+          一个羽毛球爱好者的教学笔记与知识库
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div class="flex gap-10 text-sm">
+        <div class="flex flex-col gap-2">
+          <span class="text-ink-muted text-xs uppercase tracking-widest mb-1">内容</span>
+          <a href="/knowledge/" class="text-ink-light hover:text-court transition-colors">知识库</a>
+          <a href="/lessons/" class="text-ink-light hover:text-court transition-colors">教学日记</a>
+        </div>
+        <div class="flex flex-col gap-2">
+          <span class="text-ink-muted text-xs uppercase tracking-widest mb-1">更多</span>
+          <a href="https://github.com/hakupao" target="_blank" rel="noopener noreferrer" class="text-ink-light hover:text-court transition-colors inline-flex items-center gap-1.5">
+            GitHub
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50">
+              <path d="M7 17L17 7M17 7H7M17 7V17"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider with decorative element -->
+    <div class="flex items-center gap-4 mb-6">
+      <div class="h-px flex-1 bg-paper-dark/60"></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-ink-muted/40">
+        <circle cx="12" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 9L12 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M9 13L15 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="h-px flex-1 bg-paper-dark/60"></div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-ink-muted">
+      <p>&copy; {year} Shuttle Path</p>
+      <p>
+        Made with
+        <span class="inline-block mx-0.5" aria-label="heart">&#9829;</span>
+        by <a href="https://github.com/hakupao" target="_blank" rel="noopener noreferrer" class="hover:text-court transition-colors">hakupao</a>
+      </p>
+    </div>
+  </div>
+</footer>

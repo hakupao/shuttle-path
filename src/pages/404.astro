@@ -1,0 +1,36 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="页面未找到">
+  <div class="max-w-6xl mx-auto px-[--spacing-page] py-32 text-center">
+    <div class="max-w-sm mx-auto">
+      <!-- Shuttlecock out of bounds illustration -->
+      <div class="relative w-24 h-24 mx-auto mb-8">
+        <div class="absolute inset-0 rounded-full bg-court-50 animate-pulse"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="text-court rotate-[-20deg]">
+            <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 10L12 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 15L16 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <p class="font-brand text-6xl text-court-dark mb-4">404</p>
+      <h1 class="font-heading text-xl font-semibold text-ink mb-3">球出界了</h1>
+      <p class="text-sm text-ink-muted mb-8 leading-relaxed">
+        这个页面不存在，可能已经被移动或删除。
+      </p>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-court text-paper text-sm font-medium rounded-lg hover:bg-court-light transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
+        </svg>
+        回到首页
+      </a>
+    </div>
+  </div>
+</BaseLayout>

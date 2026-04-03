@@ -1,0 +1,107 @@
+---
+const pathname = Astro.url.pathname;
+
+const links = [
+  { href: '/', label: '首页' },
+  { href: '/knowledge/', label: '知识库' },
+  { href: '/lessons/', label: '教学日记' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-paper/85 border-b border-paper-dark/50">
+  <nav class="max-w-6xl mx-auto px-[--spacing-page] flex items-center justify-between h-16">
+    <!-- Brand -->
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-full bg-court flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="text-paper">
+          <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 10 L12 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 14 L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="font-brand text-xl tracking-tight text-court-dark">
+        Shuttle Path
+      </span>
+    </a>
+
+    <!-- Desktop Links -->
+    <div class="hidden md:flex items-center gap-8">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'nav-link text-sm tracking-wide transition-colors duration-200',
+            pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+              ? 'text-court font-medium active'
+              : 'text-ink-light hover:text-court',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden p-2 -mr-2 text-ink-light hover:text-court transition-colors"
+      aria-label="打开菜单"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6" class="origin-center transition-transform duration-300" id="menu-line-1"/>
+        <line x1="3" y1="12" x2="21" y2="12" class="transition-opacity duration-300" id="menu-line-2"/>
+        <line x1="3" y1="18" x2="21" y2="18" class="origin-center transition-transform duration-300" id="menu-line-3"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu Panel -->
+  <div
+    id="mobile-menu"
+    class="md:hidden overflow-hidden transition-all duration-400 ease-[--ease-out-expo]"
+    style="max-height: 0;"
+  >
+    <div class="px-[--spacing-page] pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark/50">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'block py-3 px-4 rounded-lg text-sm transition-colors duration-200',
+            pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+              ? 'text-court font-medium bg-court-50'
+              : 'text-ink-light hover:text-court hover:bg-court-50/50',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  let open = false;
+
+  btn?.addEventListener('click', () => {
+    open = !open;
+    if (menu) {
+      menu.style.maxHeight = open ? `${menu.scrollHeight}px` : '0';
+    }
+    btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+
+    const l1 = document.getElementById('menu-line-1');
+    const l2 = document.getElementById('menu-line-2');
+    const l3 = document.getElementById('menu-line-3');
+    if (open) {
+      l1?.setAttribute('transform', 'rotate(45 12 12)');
+      l2?.setAttribute('style', 'opacity:0');
+      l3?.setAttribute('transform', 'rotate(-45 12 12)');
+    } else {
+      l1?.removeAttribute('transform');
+      l2?.removeAttribute('style');
+      l3?.removeAttribute('transform');
+    }
+  });
+</script>

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allLessons = await getCollection('lessons', ({ data }) => !data.draft);
+const sorted = allLessons.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<BaseLayout title="教学日记" description="羽毛球教学课堂记录与反思">
+  <div class="max-w-6xl mx-auto px-[--spacing-page] py-12 md:py-20">
+    <!-- Header -->
+    <div class="mb-14">
+      <span class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium fade-in-up">Lessons</span>
+      <h1 class="font-heading text-3xl md:text-4xl font-bold text-court-dark mt-2 mb-4 fade-in-up" style="transition-delay:80ms">
+        教学日记
+      </h1>
+      <p class="text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
+        每一节课都是一次独立的创作。这里记录教学过程、训练思路与课后反思。
+      </p>
+    </div>
+
+    {sorted.length > 0 ? (
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+        {sorted.map((lesson) => (
+          <a
+            href={`/lessons/${lesson.id}/`}
+            class="fade-in-up group block rounded-2xl overflow-hidden border border-paper-dark/60 bg-paper hover:shadow-lg hover:shadow-court/[0.04] hover:border-court/20 transition-all duration-300"
+          >
+            <!-- Color banner -->
+            <div
+              class="h-28 relative overflow-hidden"
+              style={`background-color: ${lesson.data.coverColor || '#1b4332'}`}
+            >
+              <!-- Subtle pattern overlay -->
+              <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px); background-size: 24px 24px;"></div>
+              <!-- Date badge -->
+              <div class="absolute bottom-3 left-4 bg-white/90 backdrop-blur-sm text-xs font-medium px-2.5 py-1 rounded-md" style={`color: ${lesson.data.coverColor || '#1b4332'}`}>
+                {formatDate(lesson.data.date)}
+              </div>
+            </div>
+
+            <div class="p-6">
+              <h3 class="font-heading text-lg font-semibold text-ink group-hover:text-court transition-colors mb-2 leading-snug">
+                {lesson.data.title}
+              </h3>
+              {lesson.data.description && (
+                <p class="text-sm text-ink-muted leading-relaxed line-clamp-3">
+                  {lesson.data.description}
+                </p>
+              )}
+              {lesson.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-1.5 mt-4">
+                  {lesson.data.tags.map((tag: string) => (
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-paper-warm text-ink-muted">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-20 fade-in-up">
+        <div class="w-16 h-16 rounded-full bg-paper-warm flex items-center justify-center mx-auto mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="text-ink-muted">
+            <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 10L12 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 15L16 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="text-ink-muted">教学日记即将更新，敬请期待</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
