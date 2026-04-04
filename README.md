@@ -1,149 +1,359 @@
-<p align="center">
-  <img src="public/favicon.svg" width="60" alt="Shuttle Path Logo" />
-</p>
+[English](README.md) | [中文](README_CN.md)
 
-<h1 align="center">Shuttle Path</h1>
+<div align="center">
 
-<p align="center">
-  <strong>羽毛球教学知识平台</strong><br/>
-  系统化的知识库与沉浸式教学日记
-</p>
+```svg
+<svg viewBox="0 0 800 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+      .shuttle-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 72px;
+        font-weight: 700;
+        fill: url(#titleGradient);
+        letter-spacing: -2px;
+      }
+      .shuttle-subtitle {
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        fill: #64748b;
+        letter-spacing: 2px;
+      }
+    </style>
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <text x="400" y="75" text-anchor="middle" class="shuttle-title">Shuttle Path</text>
+  <text x="400" y="105" text-anchor="middle" class="shuttle-subtitle">Badminton Teaching Knowledge Platform</text>
+</svg>
+```
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Astro-5-BC52EE?logo=astro&logoColor=white" alt="Astro 5" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/MDX-3-FCB32D?logo=mdx&logoColor=black" alt="MDX" />
-  <img src="https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?logo=cloudflarepages&logoColor=white" alt="Cloudflare Pages" />
-</p>
+**A knowledge platform for badminton enthusiasts and coaches** ✨
+
+[![Astro](https://img.shields.io/badge/Astro-5.7-BC52EE?logo=astro&logoColor=white&style=flat-square)](https://astro.build)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black&style=flat-square)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1-06B6D4?logo=tailwindcss&logoColor=white&style=flat-square)](https://tailwindcss.com)
+[![MDX](https://img.shields.io/badge/MDX-3-FCB32D?logo=mdx&logoColor=black&style=flat-square)](https://mdxjs.com)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-Deployed-F38020?logo=cloudflarepages&logoColor=white&style=flat-square)](https://shuttle-path.pages.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+
+[🌐 Live Demo](https://shuttle-path.pages.dev) · [📖 View Docs](./docs/) · [🐛 Report Bug](https://github.com/hakupao/shuttle-path/issues)
+
+</div>
 
 ---
 
-## 概览
+## 📋 Table of Contents
 
-Shuttle Path 是一个面向羽毛球爱好者和教练的教学知识平台，包含两大核心板块：
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
+- [Content Management](#content-management)
+- [Development](#development)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
-- **知识库** — 手法、步法、运动科学，统一学术排版，结构化的技术知识
-- **教学日记** — 每节课独立设计，沉浸式的视觉叙事体验（灵感来自 [pudding.cool](https://pudding.cool)）
+---
 
-> 每一篇教学日记都拥有完全独立的视觉风格——从樱花飘落的春日步法课，到未来更多主题的创意呈现。
+## 🎯 Overview
 
-## 特性
+<details open>
+<summary><strong>Shuttle Path</strong> is a comprehensive teaching knowledge platform designed for badminton enthusiasts and coaches.</summary>
 
-- **Islands 架构** — Astro 5 静态优先，React 组件按需水合
-- **Content Collections** — 类型安全的内容管理，MDX 支持丰富组件嵌入
-- **教学日记自由设计** — 每篇日记可拥有独立的主题、字体、配色、动画
-- **手绘插画风** — 活力绿 + 阳光橙的运动主题，得意黑 (Smiley Sans) 标题字体
-- **响应式设计** — 移动端与桌面端均精心适配
-- **无障碍友好** — 语义化 HTML、`prefers-reduced-motion` 动画降级
+The platform consists of **two core modules**:
 
-## 项目结构
+1. **Knowledge Base** — Techniques, footwork, sports science with academic formatting and structured technical content
+2. **Teaching Diaries** — Immersive storytelling for each lesson with independent visual design (inspired by [pudding.cool](https://pudding.cool))
+
+> Each teaching diary has its own independent visual style — from cherry blossoms falling in spring footwork lessons to creative themes for future content.
+
+</details>
+
+### Architecture Overview
+
+```mermaid
+graph TB
+    A["👥 Badminton Community"] --> B["📚 Knowledge Base<br/>Techniques & Theory"]
+    A --> C["📖 Teaching Diaries<br/>Lesson Narratives"]
+    B --> D["MDX Content<br/>Type-Safe Collections"]
+    C --> E["React Components<br/>Dynamic Lessons"]
+    D --> F["Astro Static Build<br/>Islands Architecture"]
+    E --> F
+    F --> G["🌐 Cloudflare Pages<br/>shuttle-path.pages.dev"]
+    style A fill:#22c55e,stroke:#16a34a,color:#fff
+    style B fill:#3b82f6,stroke:#1e40af,color:#fff
+    style C fill:#f97316,stroke:#c2410c,color:#fff
+    style G fill:#f38020,stroke:#b34a09,color:#fff
+```
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🏝️ **Islands Architecture** | Astro 5 static-first with React components hydrated on-demand |
+| 📦 **Content Collections** | Type-safe content management with MDX support for rich component embedding |
+| 🎨 **Flexible Design** | Each teaching diary can have independent themes, fonts, color schemes, and animations |
+| ✏️ **Hand-Drawn Style** | Vibrant green + sunny orange color scheme with Smiley Sans font |
+| 📱 **Responsive Design** | Carefully optimized for both mobile and desktop experiences |
+| ♿ **Accessibility** | Semantic HTML, `prefers-reduced-motion` animation fallback |
+| 🚀 **Performance** | Static site generation with edge deployment |
+| 🔒 **Type Safety** | Full TypeScript support throughout |
+
+---
+
+## 🛠️ Tech Stack
+
+<details open>
+<summary><strong>View Technology Details</strong></summary>
+
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Astro** | 5.7.10 | Static site framework, Content Collections |
+| **React** | 19.1.0 | Interactive components (Islands Architecture) |
+| **React DOM** | 19.1.0 | React DOM rendering |
+| **Tailwind CSS** | 4.1.4 | Utility-first CSS framework |
+| **TypeScript** | 5.8.3 | Type-safe JavaScript |
+| **MDX** | 4.3.0 | Markdown + JSX content format |
+| **@astrojs/react** | 4.2.1 | Astro React integration |
+| **@tailwindcss/vite** | 4.1.4 | Tailwind CSS Vite plugin |
+
+**Deployment**: [Cloudflare Pages](https://pages.cloudflare.com)
+
+</details>
+
+---
+
+## 📁 Project Structure
 
 ```
 shuttle-path/
 ├── src/
 │   ├── components/
-│   │   ├── common/             # 全站共享（Nav、Footer）
-│   │   └── lessons/            # 教学日记专属主题组件
+│   │   ├── common/              # Shared site-wide (Nav, Footer)
+│   │   └── lessons/             # Theme components for teaching diaries
 │   ├── content/
-│   │   ├── knowledge/          # 知识库文章 (MDX)
-│   │   └── lessons/            # 教学日记 (MDX)
-│   ├── layouts/                # 页面布局
-│   ├── pages/                  # 路由页面
+│   │   ├── knowledge/           # Knowledge base articles (MDX)
+│   │   └── lessons/             # Teaching diaries (MDX)
+│   ├── layouts/                 # Page layouts
+│   ├── pages/                   # Route pages
 │   └── styles/
-│       └── global.css          # 设计系统 + Tailwind CSS
-├── docs/                       # 开发日志与技术方案
+│       └── global.css           # Design system + Tailwind CSS
+├── docs/                        # Development logs and technical plans
 ├── public/
-│   ├── fonts/                  # 得意黑字体
-│   └── images/                 # 静态图片资源
-└── CLAUDE.md                   # AI 协作指令
+│   ├── fonts/                   # Smiley Sans custom font
+│   └── images/                  # Static image assets
+├── astro.config.mjs             # Astro configuration
+├── tailwind.config.ts           # Tailwind CSS configuration
+├── tsconfig.json                # TypeScript configuration
+└── package.json                 # Project dependencies
 ```
-
-## 快速开始
-
-```bash
-# 克隆项目
-git clone https://github.com/hakupao/shuttle-path.git
-cd shuttle-path
-
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-# → http://localhost:4321
-
-# 构建生产版本
-npm run build
-
-# 预览构建结果
-npm run preview
-```
-
-## 技术栈
-
-| 技术 | 用途 |
-|------|------|
-| [Astro 5](https://astro.build) | 静态站点框架，Content Collections |
-| [React 19](https://react.dev) | 交互组件（Islands 架构） |
-| [Tailwind CSS 4](https://tailwindcss.com) | 样式系统（CSS-based 配置） |
-| [MDX](https://mdxjs.com) | Markdown + 组件混合内容格式 |
-| [TypeScript](https://www.typescriptlang.org) | 类型安全 |
-| [Cloudflare Pages](https://pages.cloudflare.com) | 边缘部署 |
-
-## 内容管理
-
-详细的内容更新指南见 [`docs/10-内容更新教程.md`](docs/10-内容更新教程.md)。
-
-### 知识库文章
-
-```bash
-# 新建文章
-touch src/content/knowledge/your-topic.mdx
-```
-
-必填 frontmatter: `title`, `description`, `category`, `publishDate`
-
-### 教学日记
-
-```bash
-# 新建教学日记
-touch src/content/lessons/your-lesson.mdx
-```
-
-必填 frontmatter: `title`, `date`
-
-每篇教学日记可以创建专属的 Astro 主题组件（位于 `src/components/lessons/`），实现完全独立的视觉设计。
-
-## 开发文档
-
-项目的需求讨论、技术方案和设计决策记录在 `docs/` 目录中：
-
-| 文档 | 内容 |
-|------|------|
-| `01` ~ `03` | 需求讨论与确认 |
-| `04` | 技术方案 |
-| `05` | 部署方案对比 |
-| `06` ~ `07` | 前端设计方向 |
-| `08` | 页面线框与实施计划 |
-| `09` | 待交付素材清单 |
-| `10` | 内容更新教程 |
-
-## 部署
-
-项目通过 GitHub 推送自动部署到 Cloudflare Pages：
-
-```
-git push origin main → Cloudflare Pages 自动构建 → shuttle-path.pages.dev
-```
-
-## License
-
-MIT
 
 ---
 
-<p align="center">
-  Made with ❤ by <a href="https://github.com/hakupao">hakupao</a>
-</p>
+## 🚀 Quick Start
+
+### Prerequisites
+- **Node.js** 18.0 or higher
+- **npm**, **yarn**, or **pnpm** package manager
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/hakupao/shuttle-path.git
+cd shuttle-path
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# → Visit http://localhost:4321
+```
+
+### Available Commands
+
+```bash
+# Development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build locally
+npm run preview
+
+# Run Astro CLI commands
+npm run astro -- [command]
+```
+
+---
+
+## 📝 Content Management
+
+<details>
+<summary><strong>Adding New Content</strong> - Knowledge Base Articles</summary>
+
+### Knowledge Base Articles
+
+Create a new article in `src/content/knowledge/`:
+
+```bash
+touch src/content/knowledge/your-topic.mdx
+```
+
+**Required frontmatter fields:**
+```yaml
+---
+title: "Your Article Title"
+description: "Brief description for metadata"
+category: "techniques" | "footwork" | "science"
+publishDate: 2026-04-01
+---
+```
+
+**Example:**
+```mdx
+---
+title: "Badminton Footwork Basics"
+description: "Master the fundamental footwork patterns"
+category: "footwork"
+publishDate: 2026-04-04
+---
+
+## Introduction
+Your article content here...
+```
+
+For detailed guidelines, see [`docs/10-内容更新教程.md`](docs/10-内容更新教程.md).
+
+</details>
+
+<details>
+<summary><strong>Adding New Content</strong> - Teaching Diaries</summary>
+
+### Teaching Diaries
+
+Create a new diary in `src/content/lessons/`:
+
+```bash
+touch src/content/lessons/your-lesson.mdx
+```
+
+**Required frontmatter fields:**
+```yaml
+---
+title: "Lesson Title"
+date: 2026-04-04
+theme: "spring"  # optional: custom theme
+---
+```
+
+**Design Independence:**
+Each teaching diary can have a dedicated Astro theme component in `src/components/lessons/`, enabling completely independent visual design. Example: Spring cherry blossom theme, future creative themes, etc.
+
+**Example:**
+```mdx
+---
+title: "Spring Footwork Lesson"
+date: 2026-04-04
+theme: "spring"
+---
+
+## Today's Focus
+Today we practiced foundation steps...
+```
+
+</details>
+
+---
+
+## 💻 Development
+
+### Development Documentation
+
+Project requirements, technical solutions, and design decisions are documented in the `docs/` directory:
+
+| Document | Contents |
+|----------|----------|
+| `01-03` | Requirements discussion and confirmation |
+| `04` | Technical solution overview |
+| `05` | Deployment options comparison |
+| `06-07` | Frontend design direction |
+| `08` | Page wireframes and implementation plan |
+| `09` | Deliverables checklist |
+| `10` | Content update tutorial |
+
+### Key Development Concepts
+
+**Islands Architecture:** Only interactive components are hydrated with JavaScript, keeping the static content lightweight and fast.
+
+**Content Collections:** Type-safe content management with automatic schema validation.
+
+**MDX Integration:** Seamlessly embed React components within Markdown content for rich, interactive articles.
+
+---
+
+## 🌐 Deployment
+
+The project automatically deploys to **Cloudflare Pages** on every push to the main branch:
+
+```
+git push origin main
+  → GitHub detects push
+  → Cloudflare Pages builds automatically
+  → Site updates at shuttle-path.pages.dev
+```
+
+**Deployment Configuration:**
+- **Build Command**: `npm run build`
+- **Build Output**: `dist/`
+- **Environment**: Production-ready edge network
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork** the repository on GitHub
+2. **Clone** your fork locally
+3. **Create** a feature branch: `git checkout -b feature/your-feature`
+4. **Make** your changes with clear commits
+5. **Push** to your fork
+6. **Open** a Pull Request with description of changes
+
+**Contribution Guidelines:**
+- Follow the existing code style (TypeScript, ESLint config)
+- Ensure all tests pass
+- Update documentation if needed
+- Add descriptive commit messages
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+You are free to use this project for personal and commercial purposes.
+
+---
+
+<div align="center">
+
+### 🎾 Made with ❤️ by [hakupao](https://github.com/hakupao)
+
+[⬆ back to top](#-table-of-contents)
+
+**Have questions?** [Open an issue](https://github.com/hakupao/shuttle-path/issues) or reach out on GitHub.
+
+</div>
