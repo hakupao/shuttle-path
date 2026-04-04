@@ -8,7 +8,7 @@
 /* --- Smiley Sans (得意黑) --- */
 @font-face {
   font-family: 'Smiley Sans';
-  src: url('/fonts/SmileySans-Oblique.woff2') format('woff2');
+  src: url('/fonts/SmileySans-Oblique-subset.woff2') format('woff2');
   font-weight: normal;
   font-style: oblique;
   font-display: swap;
@@ -48,7 +48,7 @@
   --color-sketch-light: #9e9890;
 
   /* --- Typography --- */
-  --font-display: 'Smiley Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --font-display: 'Smiley Sans', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', system-ui, sans-serif;
   --font-heading: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
   --font-body: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
