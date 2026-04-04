@@ -22,9 +22,9 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="max-w-3xl mx-auto px-[--spacing-page] py-12 md:py-20">
+  <article class="max-w-3xl mx-auto px-(--spacing-page) py-10 md:py-20">
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-ink-muted mb-8">
+    <nav class="flex items-center gap-2 text-xs sm:text-sm text-ink-muted mb-6 md:mb-8">
       <a href="/knowledge/" class="hover:text-court transition-colors">知识库</a>
       <span class="text-paper-dark">/</span>
       <a href={`/knowledge/?category=${category}`} class="hover:text-court transition-colors">
@@ -33,14 +33,14 @@ const formatDate = (date: Date) =>
     </nav>
 
     <!-- Article Header -->
-    <header class="mb-10">
-      <h1 class="heading-display text-ink leading-tight mb-4">
+    <header class="mb-8 md:mb-10">
+      <h1 class="heading-display text-ink leading-tight mb-3 md:mb-4">
         {title}
       </h1>
-      <p class="text-ink-light text-lg leading-relaxed mb-5">
+      <p class="text-ink-light text-base md:text-lg leading-relaxed mb-4 md:mb-5">
         {description}
       </p>
-      <div class="flex flex-wrap items-center gap-4 text-sm text-ink-muted">
+      <div class="flex flex-wrap items-center gap-3 md:gap-4 text-xs sm:text-sm text-ink-muted">
         <time datetime={publishDate.toISOString()}>
           {formatDate(publishDate)}
         </time>

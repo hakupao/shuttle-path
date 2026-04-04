@@ -23,27 +23,27 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout title="知识库" description="羽毛球手法、步法与运动科学知识库">
-  <div class="max-w-6xl mx-auto px-[--spacing-page] py-12 md:py-20">
+  <div class="max-w-6xl mx-auto px-(--spacing-page) py-10 md:py-20">
     <!-- Header -->
-    <div class="mb-14">
+    <div class="mb-10 md:mb-14">
       <h1 class="heading-display text-ink mb-3 fade-in-up">
         知识库
       </h1>
-      <p class="text-xs uppercase tracking-[0.2em] text-court font-medium mb-4 fade-in-up" style="transition-delay:80ms">
+      <p class="text-xs uppercase tracking-[0.2em] text-court font-medium mb-3 md:mb-4 fade-in-up" style="transition-delay:80ms">
         Knowledge Base
       </p>
-      <p class="text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
+      <p class="text-sm md:text-base text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
         系统化的羽毛球技术知识，从基础握拍到高级战术，从步法启动到运动科学。
       </p>
     </div>
 
     <!-- Category sections -->
     {grouped.map((group, gi) => (
-      <section class="mb-16 fade-in-up" style={`transition-delay:${(gi + 1) * 120}ms`} id={group.key}>
-        <div class="flex items-center gap-3 mb-6">
+      <section class="mb-12 md:mb-16 fade-in-up" style={`transition-delay:${(gi + 1) * 120}ms`} id={group.key}>
+        <div class="flex items-center gap-3 mb-4 md:mb-6">
           {/* 左侧彩色粗竖线 */}
           <div class="w-1 h-8 rounded-full" style={`background-color: ${group.color}`}></div>
-          <h2 class="text-xl font-bold text-ink">{group.label}</h2>
+          <h2 class="text-lg md:text-xl font-bold text-ink">{group.label}</h2>
           <span class="text-xs text-ink-muted tracking-wide">{group.en}</span>
           <span class="ml-auto text-xs text-ink-muted">{group.articles.length} 篇</span>
         </div>
@@ -54,18 +54,18 @@ const formatDate = (date: Date) =>
               <div>
                 <a
                   href={`/knowledge/${article.id}/`}
-                  class="squircle group flex items-start gap-5 p-5 rounded-xl border border-transparent hover:border-paper-dark hover:bg-paper-dark/30 transition-all duration-200"
+                  class="squircle group flex items-start gap-3 sm:gap-5 p-4 sm:p-5 rounded-xl border border-transparent hover:border-paper-dark hover:bg-paper-dark/30 transition-all duration-200"
                 >
                   <div class="flex-1 min-w-0">
-                    <h3 class="text-base font-bold text-ink group-hover:text-court transition-colors mb-1.5">
+                    <h3 class="text-sm sm:text-base font-bold text-ink group-hover:text-court transition-colors mb-1">
                       {article.data.title}
                     </h3>
-                    <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
+                    <p class="text-xs sm:text-sm text-ink-muted leading-relaxed line-clamp-2">
                       {article.data.description}
                     </p>
                   </div>
                   <div class="flex-shrink-0 flex flex-col items-end gap-2">
-                    <time class="text-xs text-ink-muted whitespace-nowrap">{formatDate(article.data.publishDate)}</time>
+                    <time class="text-xs text-ink-muted whitespace-nowrap hidden sm:block">{formatDate(article.data.publishDate)}</time>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-ink-muted/30 group-hover:text-court transition-colors">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
                     </svg>

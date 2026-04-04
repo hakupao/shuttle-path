@@ -12,22 +12,22 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout title="教学日记" description="羽毛球教学课堂记录与反思">
-  <div class="max-w-6xl mx-auto px-[--spacing-page] py-12 md:py-20">
+  <div class="max-w-6xl mx-auto px-(--spacing-page) py-10 md:py-20">
     <!-- Header -->
-    <div class="mb-14">
+    <div class="mb-10 md:mb-14">
       <h1 class="heading-display text-ink mb-3 fade-in-up">
         教学日记
       </h1>
-      <p class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium mb-4 fade-in-up" style="transition-delay:80ms">
+      <p class="text-xs uppercase tracking-[0.2em] text-shuttle font-medium mb-3 md:mb-4 fade-in-up" style="transition-delay:80ms">
         Lessons
       </p>
-      <p class="text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
+      <p class="text-sm md:text-base text-ink-muted max-w-lg leading-relaxed fade-in-up" style="transition-delay:160ms">
         每一节课都是一次独立的创作。这里记录教学过程、训练思路与课后反思。
       </p>
     </div>
 
     {sorted.length > 0 ? (
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 stagger-children">
         {sorted.map((lesson, i) => {
           const accentColor = lesson.data.coverColor || accentColors[i % accentColors.length];
           return (

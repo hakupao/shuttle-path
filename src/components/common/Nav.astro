@@ -9,7 +9,7 @@ const links = [
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-paper-dark">
-  <nav class="max-w-6xl mx-auto px-[--spacing-page] flex items-center justify-between h-16">
+  <nav class="max-w-6xl mx-auto px-(--spacing-page) flex items-center justify-between h-16">
     <!-- Brand -->
     <a href="/" class="flex items-center gap-2.5 group">
       <!-- 占位 Logo：等手绘 SVG 交付后替换 -->
@@ -60,7 +60,7 @@ const links = [
     class="md:hidden overflow-hidden transition-all duration-400 ease-[--ease-out-expo]"
     style="max-height: 0;"
   >
-    <div class="px-[--spacing-page] pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark">
+    <div class="px-(--spacing-page) pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark">
       {links.map((link) => (
         <a
           href={link.href}
