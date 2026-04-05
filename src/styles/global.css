@@ -24,7 +24,6 @@
 
   /* 背景色（paper-dark 加深一档，边框可感知） */
   --color-paper: #FFFFFF;
-  --color-paper-warm: #FEFCF8;
   --color-paper-dark: #E5E7EB;
 
   /* 主题色：球场绿（真实球场地胶色，替换 Tailwind Emerald） */
@@ -44,11 +43,6 @@
 
   /* 点缀色 */
   --color-coral: #FB7185;
-  --color-lemon: #FCD34D;
-
-  /* 手绘线条色 */
-  --color-sketch: #3f3a36;
-  --color-sketch-light: #9e9890;
 
   /* 知识库分类色系 */
   --color-cat-strokes: #1B8A4E;
@@ -132,24 +126,6 @@
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-ink-light);
   }
-}
-
-/* ============================================
-   Noise Texture Overlay (纸质颗粒感)
-   ============================================ */
-
-.surface-grain {
-  position: relative;
-}
-
-.surface-grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.06;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* ============================================
@@ -386,11 +362,6 @@
   width: 100%;
 }
 
-/* 首页白字 Nav 下划线 */
-.nav-link-home::after {
-  background-color: white;
-}
-
 /* 知识库列表页 — 分类色 hover 态 */
 a[style*="--cat-hover-bg"]:hover {
   background-color: var(--cat-hover-bg);
@@ -403,15 +374,7 @@ a[style*="--cat-color"]:hover svg {
 }
 
 /* ============================================
-   Hand-drawn Border Filter (手绘毛边效果)
-   ============================================ */
-
-.hand-drawn-filter {
-  filter: url(#squiggle-filter);
-}
-
-/* ============================================
-   Wavy Divider (手绘波浪分隔线 — 占位)
+   Wavy Divider (手绘波浪分隔线)
    ============================================ */
 
 .divider-wavy {

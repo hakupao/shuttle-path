@@ -350,13 +350,7 @@ const formatDate = (date: Date) =>
     text-decoration: none;
     color: white;
     border-bottom: none;
-  }
-  .court-row-lessons {
     min-height: 140px;
-  }
-  .court-row-knowledge {
-    min-height: 140px;
-    border-bottom: none;
   }
   @media (min-width: 768px) {
     .court-row-lessons { min-height: 180px; }
@@ -460,16 +454,12 @@ const formatDate = (date: Date) =>
   .court-dim-net {
     position: absolute;
     right: -24px;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 9px;
     color: rgba(255, 255, 255, 0.3);
     font-family: var(--font-mono);
     letter-spacing: 0.1em;
-  }
-
-  /* 动态定位 NET 标注到球网位置 */
-  .court-dim-net {
-    top: 50%; /* 近似，因为球网不一定在精确 50% */
-    transform: translateY(-50%);
   }
 </style>
 
