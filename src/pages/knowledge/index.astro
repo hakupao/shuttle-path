@@ -4,10 +4,10 @@ import { getCollection } from 'astro:content';
 
 const allKnowledge = await getCollection('knowledge', ({ data }) => !data.draft);
 
-const categoryMeta: Record<string, { label: string; en: string; color: string }> = {
-  strokes: { label: '手法', en: 'Strokes', color: '#10B981' },
-  footwork: { label: '步法', en: 'Footwork', color: '#F59E0B' },
-  'sports-science': { label: '运动科学', en: 'Sports Science', color: '#FB7185' },
+const categoryMeta: Record<string, { label: string; en: string; color: string; hoverBg: string }> = {
+  strokes: { label: '手法', en: 'Strokes', color: '#1B8A4E', hoverBg: '#E8F5EE' },
+  footwork: { label: '步法', en: 'Footwork', color: '#1565C0', hoverBg: '#E3F2FD' },
+  'sports-science': { label: '运动科学', en: 'Sports Science', color: '#D4553A', hoverBg: '#FFF0ED' },
 };
 
 const grouped = Object.entries(categoryMeta).map(([key, meta]) => ({
@@ -54,10 +54,11 @@ const formatDate = (date: Date) =>
               <div>
                 <a
                   href={`/knowledge/${article.id}/`}
-                  class="squircle group flex items-start gap-3 sm:gap-5 p-4 sm:p-5 rounded-xl border border-transparent hover:border-paper-dark hover:bg-paper-dark/30 transition-all duration-200"
+                  class="squircle group flex items-start gap-3 sm:gap-5 p-4 sm:p-5 rounded-xl border border-transparent hover:border-paper-dark transition-all duration-200"
+                  style={`--cat-hover-bg: ${group.hoverBg}; --cat-color: ${group.color}`}
                 >
                   <div class="flex-1 min-w-0">
-                    <h3 class="text-sm sm:text-base font-bold text-ink group-hover:text-court transition-colors mb-1">
+                    <h3 class="text-sm sm:text-base font-bold text-ink transition-colors mb-1" style="transition-property: color">
                       {article.data.title}
                     </h3>
                     <p class="text-xs sm:text-sm text-ink-muted leading-relaxed line-clamp-2">
@@ -66,12 +67,11 @@ const formatDate = (date: Date) =>
                   </div>
                   <div class="flex-shrink-0 flex flex-col items-end gap-2">
                     <time class="text-xs text-ink-muted whitespace-nowrap hidden sm:block">{formatDate(article.data.publishDate)}</time>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-ink-muted/30 group-hover:text-court transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-ink-muted/30 transition-colors">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
                     </svg>
                   </div>
                 </a>
-                {/* 文章间手绘虚线分隔 */}
                 {ai < group.articles.length - 1 && (
                   <div class="mx-5 border-b border-dashed border-ink-muted/15"></div>
                 )}

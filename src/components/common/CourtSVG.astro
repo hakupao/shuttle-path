@@ -1,0 +1,32 @@
+---
+interface Props {
+  class?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+}
+const {
+  class: className = '',
+  strokeColor = 'white',
+  strokeWidth = 2.5,
+} = Astro.props;
+const sw = strokeWidth;     // 外框线宽
+const swi = sw * 0.6;       // 内线线宽
+---
+<svg class={className} viewBox="-2 -2 248 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 外框（双打边界） -->
+  <rect x="0" y="0" width="244" height="536" stroke={strokeColor} stroke-width={sw} rx="0.5"/>
+  <!-- 单打边线 -->
+  <line x1="18.4" y1="0" x2="18.4" y2="536" stroke={strokeColor} stroke-width={swi}/>
+  <line x1="225.6" y1="0" x2="225.6" y2="536" stroke={strokeColor} stroke-width={swi}/>
+  <!-- 球网 -->
+  <line x1="0" y1="268" x2="244" y2="268" stroke={strokeColor} stroke-width={sw}/>
+  <!-- 前发球线 -->
+  <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke={strokeColor} stroke-width={swi}/>
+  <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke={strokeColor} stroke-width={swi}/>
+  <!-- 双打后发球线 -->
+  <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke={strokeColor} stroke-width={swi}/>
+  <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke={strokeColor} stroke-width={swi}/>
+  <!-- 中线（仅发球区内） -->
+  <line x1="122" y1="0" x2="122" y2="188.8" stroke={strokeColor} stroke-width={swi}/>
+  <line x1="122" y1="347.2" x2="122" y2="536" stroke={strokeColor} stroke-width={swi}/>
+</svg>

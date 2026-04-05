@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shuttle Path — 球场配色方案 Demo</title>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+    color: #1F2937;
+    background: #f5f5f5;
+    line-height: 1.6;
+  }
+
+  /* ===== Theme Variables (default: Classic Green) ===== */
+  :root {
+    --court-primary: #1B8A4E;
+    --court-primary-light: #2DA060;
+    --court-primary-dark: #147A3E;
+    --court-surround: #147A3E;
+    --court-line: #ffffff;
+    --court-50: #E8F5EE;
+    --court-100: #C8EBD5;
+    --accent: #F59E0B;
+    --accent-light: #FBBF24;
+    --accent-50: #FFFBEB;
+    --ink: #1F2937;
+    --ink-light: #374151;
+    --ink-muted: #6B7280;
+    --paper: #FFFFFF;
+    --paper-dark: #E5E7EB;
+    --theme-name: "Classic Green";
+  }
+
+  /* ===== Theme Switcher Panel ===== */
+  .theme-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .theme-panel-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9CA3AF;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .theme-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    color: #e0e0e0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .theme-btn:hover { background: rgba(255,255,255,0.15); }
+  .theme-btn.active { border-color: #F59E0B; background: rgba(245,158,11,0.15); color: #FBBF24; }
+  .theme-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: inline-flex;
+    overflow: hidden;
+  }
+  .theme-swatch-half {
+    width: 7px; height: 14px;
+  }
+
+  /* ===== Section Nav ===== */
+  .section-nav {
+    position: fixed;
+    top: 56px;
+    left: 0; right: 0;
+    z-index: 999;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #E5E7EB;
+    padding: 8px 20px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .section-nav a {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6B7280;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+    border: 1px solid #E5E7EB;
+  }
+  .section-nav a:hover { color: var(--court-primary); border-color: var(--court-primary); }
+
+  /* ===== Layout ===== */
+  .demo-section {
+    margin-top: 110px;
+    padding: 60px 20px;
+  }
+  .demo-section + .demo-section { margin-top: 0; }
+  .section-header {
+    max-width: 900px;
+    margin: 0 auto 40px;
+    text-align: center;
+  }
+  .section-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .section-header .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .section-header p {
+    font-size: 15px;
+    color: #6B7280;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ===== F1: Hero Court Background ===== */
+  .f1-demo { background: #f9fafb; }
+  .f1-frame {
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    background: var(--paper);
+  }
+  /* F1 Nav */
+  .f1-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 48px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--paper-dark);
+    font-size: 13px;
+  }
+  .f1-nav-brand { font-weight: 700; color: var(--ink); }
+  .f1-nav-links { display: flex; gap: 20px; }
+  .f1-nav-links a { color: var(--ink-muted); text-decoration: none; font-weight: 500; }
+  /* F1 Hero */
+  .f1-hero {
+    background: var(--court-primary);
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .f1-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  .f1-hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  .f1-hero .subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 6px;
+    font-weight: 500;
+    position: relative;
+  }
+  .f1-hero .desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    max-width: 400px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .f1-hero .btns { display: flex; gap: 10px; position: relative; }
+  .f1-hero .btn-primary {
+    padding: 10px 24px;
+    background: white;
+    color: var(--court-primary);
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .f1-hero .btn-outline {
+    padding: 10px 24px;
+    background: transparent;
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  /* Court lines overlay on hero */
+  .f1-hero .court-lines {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.12;
+  }
+  /* F1 Content */
+  .f1-content {
+    padding: 32px 24px;
+    background: var(--paper);
+  }
+  .f1-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--court-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .f1-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .f1-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .f1-card {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--paper-dark);
+    background: var(--paper);
+    transition: all 0.2s;
+  }
+  .f1-card:hover { border-color: var(--court-primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .f1-card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--court-50);
+    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--court-primary);
+    font-size: 14px;
+  }
+  .f1-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .f1-card p { font-size: 12px; color: var(--ink-muted); }
+  /* F1 Lessons Section */
+  .f1-lessons {
+    padding: 32px 24px;
+    background: var(--court-50);
+  }
+  .f1-lesson-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .f1-lesson-card {
+    display: flex;
+    background: var(--paper);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--paper-dark);
+  }
+  .f1-lesson-bar { width: 4px; flex-shrink: 0; }
+  .f1-lesson-body { padding: 14px; flex: 1; }
+  .f1-lesson-date { font-size: 11px; color: var(--ink-muted); }
+  .f1-lesson-title { font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+  /* ===== F2: Court Lines Texture ===== */
+  .f2-demo { background: #f0f0f0; }
+  .f2-frame {
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .f2-hero {
+    background: var(--paper);
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .f2-hero .court-texture {
+    position: absolute;
+    right: -60px;
+    top: -40px;
+    width: 500px;
+    height: 400px;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+  .f2-hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .f2-hero .subtitle {
+    font-size: 18px;
+    color: var(--ink-light);
+    font-weight: 500;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .f2-hero .desc {
+    font-size: 14px;
+    color: var(--ink-muted);
+    max-width: 400px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .f2-hero .btns { display: flex; gap: 10px; position: relative; }
+  .f2-hero .btn-primary {
+    padding: 10px 24px;
+    background: var(--court-primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .f2-hero .btn-outline {
+    padding: 10px 24px;
+    background: transparent;
+    color: var(--court-primary);
+    border: 1.5px solid var(--court-primary);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  .f2-content {
+    padding: 32px 24px;
+    background: var(--paper);
+    border-top: 1px solid var(--paper-dark);
+  }
+
+  /* ===== F3: Colored Category Cards ===== */
+  .f3-demo { background: #eee; }
+  .f3-frame {
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    background: var(--paper);
+  }
+  .f3-hero {
+    padding: 40px 24px 24px;
+    background: var(--paper);
+  }
+  .f3-hero h1 { font-size: 36px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .f3-hero .subtitle { font-size: 16px; color: var(--ink-muted); margin-bottom: 20px; }
+  .f3-bento {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+    padding: 0 24px 32px;
+  }
+  .f3-card {
+    padding: 24px;
+    border-radius: 14px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s;
+  }
+  .f3-card:hover { transform: translateY(-3px); }
+  .f3-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .f3-card.big { grid-row: span 2; }
+  .f3-card.primary-bg { background: var(--court-primary); }
+  .f3-card.surround-bg { background: var(--court-surround); }
+  .f3-card.accent-bg { background: var(--accent); }
+  .f3-card-en { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.7; margin-bottom: 4px; }
+  .f3-card-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .f3-card-desc { font-size: 13px; opacity: 0.8; line-height: 1.6; }
+  .f3-card-count { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+  /* F3 lessons */
+  .f3-lessons {
+    padding: 24px;
+    background: var(--court-50);
+    border-top: 1px solid var(--court-100);
+  }
+
+  /* ===== F4: Court Layout ===== */
+  .f4-demo { background: #e5e5e5; }
+  .f4-frame {
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .f4-court {
+    background: var(--court-surround);
+    padding: 16px;
+    position: relative;
+  }
+  .f4-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    height: 40px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+  }
+  .f4-nav-brand { font-weight: 700; }
+  .f4-nav-links { display: flex; gap: 16px; }
+  .f4-nav-links a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 12px; }
+  .f4-inner {
+    background: var(--court-primary);
+    border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Court line decorations */
+  .f4-inner::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255,255,255,0.25);
+    transform: translateX(-50%);
+  }
+  .f4-half {
+    padding: 40px 32px;
+    position: relative;
+  }
+  .f4-half + .f4-half {
+    border-top: 2px solid rgba(255,255,255,0.25);
+  }
+  .f4-half h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .f4-half .subtitle {
+    color: rgba(255,255,255,0.8);
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  .f4-half .desc {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .f4-zone-label {
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.25);
+    font-weight: 600;
+  }
+  .f4-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .f4-cell {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: white;
+  }
+  .f4-cell h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .f4-cell p { font-size: 11px; opacity: 0.6; }
+  .f4-footer {
+    padding: 12px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    margin-top: 12px;
+  }
+  /* Service line markers */
+  .f4-service-line {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+    bottom: 60px;
+  }
+
+  /* ===== Color Palette Display ===== */
+  .palette-section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .palette-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .palette-chip {
+    flex: 1;
+    min-width: 120px;
+    padding: 20px 14px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    position: relative;
+  }
+  .palette-chip .hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  /* ===== Shared ===== */
+  .divider {
+    width: 60px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--court-primary);
+    margin: 0 auto 40px;
+  }
+
+  @media (max-width: 700px) {
+    .f1-cards, .f1-lesson-cards, .f3-bento, .f4-grid { grid-template-columns: 1fr; }
+    .f3-card.big { grid-row: auto; }
+    .f3-bento { grid-template-columns: 1fr; }
+    .f1-hero, .f2-hero { padding: 40px 24px; }
+    .f1-hero h1, .f2-hero h1 { font-size: 32px; }
+    .theme-panel { padding: 8px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Theme Switcher ===== -->
+<div class="theme-panel">
+  <span class="theme-panel-label">球场配色：</span>
+
+  <button class="theme-btn active" onclick="setTheme('classic-green')" id="btn-classic-green">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#1B8A4E"></span>
+      <span class="theme-swatch-half" style="background:#147A3E"></span>
+    </span>
+    经典绿
+  </button>
+
+  <button class="theme-btn" onclick="setTheme('blue-green')" id="btn-blue-green">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#1565C0"></span>
+      <span class="theme-swatch-half" style="background:#1B8A4E"></span>
+    </span>
+    蓝绿
+  </button>
+
+  <button class="theme-btn" onclick="setTheme('red-blue')" id="btn-red-blue">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#C62828"></span>
+      <span class="theme-swatch-half" style="background:#1565C0"></span>
+    </span>
+    红蓝
+  </button>
+
+  <button class="theme-btn" onclick="setTheme('ocean-blue')" id="btn-ocean-blue">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#1565C0"></span>
+      <span class="theme-swatch-half" style="background:#0D47A1"></span>
+    </span>
+    深海蓝
+  </button>
+
+  <button class="theme-btn" onclick="setTheme('green-orange')" id="btn-green-orange">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#1B8A4E"></span>
+      <span class="theme-swatch-half" style="background:#D4553A"></span>
+    </span>
+    绿橙
+  </button>
+
+  <button class="theme-btn" onclick="setTheme('grey-blue')" id="btn-grey-blue">
+    <span class="theme-swatch">
+      <span class="theme-swatch-half" style="background:#455A64"></span>
+      <span class="theme-swatch-half" style="background:#263238"></span>
+    </span>
+    灰蓝
+  </button>
+</div>
+
+<!-- Section Nav -->
+<nav class="section-nav">
+  <a href="#f1">F1 球场绿底 Hero</a>
+  <a href="#f2">F2 球场线条纹理</a>
+  <a href="#f3">F3 分类彩色卡片</a>
+  <a href="#f4">F4 球场俯视布局</a>
+</nav>
+
+<!-- ===== F1: Hero with Court Green Background ===== -->
+<section class="demo-section f1-demo" id="f1">
+  <div class="section-header">
+    <div class="badge" style="background: var(--court-50); color: var(--court-primary);">方案 F1</div>
+    <h2>Hero 区域 → 球场绿底</h2>
+    <p>打开网站第一眼就是球场色 + 白色文字，彻底告别"一片白"。球场颜色作为 Hero 背景，白色内容区自然形成对比。</p>
+  </div>
+
+  <div class="f1-frame">
+    <div class="f1-nav">
+      <span class="f1-nav-brand">Shuttle Path</span>
+      <div class="f1-nav-links">
+        <a>首页</a>
+        <a>知识库</a>
+        <a>教学日记</a>
+      </div>
+    </div>
+
+    <div class="f1-hero">
+      <!-- Court lines decoration -->
+      <svg class="court-lines" width="200" height="280" viewBox="0 0 200 280">
+        <rect x="10" y="10" width="180" height="260" stroke="white" stroke-width="2" fill="none" rx="2"/>
+        <line x1="10" y1="140" x2="190" y2="140" stroke="white" stroke-width="2"/>
+        <line x1="100" y1="10" x2="100" y2="270" stroke="white" stroke-width="1"/>
+        <rect x="40" y="50" width="120" height="50" stroke="white" stroke-width="1" fill="none"/>
+        <rect x="40" y="180" width="120" height="50" stroke="white" stroke-width="1" fill="none"/>
+        <line x1="40" y1="75" x2="160" y2="75" stroke="white" stroke-width="1"/>
+        <line x1="40" y1="205" x2="160" y2="205" stroke="white" stroke-width="1"/>
+      </svg>
+
+      <h1>Shuttle Path</h1>
+      <div class="subtitle">羽毛球教学知识平台</div>
+      <div class="desc">从握拍到杀球，从站位到全场步法——系统化的羽毛球知识库与教学日记。</div>
+      <div class="btns">
+        <button class="btn-primary">浏览知识库 →</button>
+        <button class="btn-outline">教学日记</button>
+      </div>
+    </div>
+
+    <div class="f1-content">
+      <div class="f1-section-label">Knowledge Base</div>
+      <div class="f1-section-title">知识库</div>
+      <div class="f1-cards">
+        <div class="f1-card">
+          <div class="f1-card-icon">🏸</div>
+          <h4>手法 <span style="color:var(--ink-muted);font-weight:400;font-size:12px">Strokes</span></h4>
+          <p>握拍、发球、后场、前场技术</p>
+        </div>
+        <div class="f1-card">
+          <div class="f1-card-icon">👟</div>
+          <h4>步法 <span style="color:var(--ink-muted);font-weight:400;font-size:12px">Footwork</span></h4>
+          <p>站位、启动、上网、后退步法</p>
+        </div>
+        <div class="f1-card">
+          <div class="f1-card-icon">📊</div>
+          <h4>运动科学 <span style="color:var(--ink-muted);font-weight:400;font-size:12px">Science</span></h4>
+          <p>热身放松、发力原理、体能训练</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="f1-lessons">
+      <div class="f1-section-label" style="color:var(--accent)">Lessons</div>
+      <div class="f1-section-title">最新教学日记</div>
+      <div class="f1-lesson-cards">
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:var(--court-primary)"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年3月12日</div>
+            <div class="f1-lesson-title">正手高远球的发力链</div>
+          </div>
+        </div>
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:var(--accent)"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年3月5日</div>
+            <div class="f1-lesson-title">网前搓球手感训练</div>
+          </div>
+        </div>
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:#FB7185"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年2月28日</div>
+            <div class="f1-lesson-title">全场步法串联练习</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== F2: Court Lines Texture ===== -->
+<section class="demo-section f2-demo" id="f2">
+  <div class="section-header">
+    <div class="badge" style="background:#EEF2FF; color:#4F46E5;">方案 F2</div>
+    <h2>球场线条纹理叠加</h2>
+    <p>保持白底风格，将球场俯视图的白线条抽象为极淡的 SVG 背景纹理。微妙但有识别度。</p>
+  </div>
+
+  <div class="f2-frame">
+    <div class="f1-nav">
+      <span class="f1-nav-brand">Shuttle Path</span>
+      <div class="f1-nav-links">
+        <a>首页</a>
+        <a>知识库</a>
+        <a>教学日记</a>
+      </div>
+    </div>
+
+    <div class="f2-hero">
+      <!-- Court lines as background texture -->
+      <svg class="court-texture" viewBox="0 0 400 600" fill="none">
+        <rect x="20" y="20" width="360" height="560" stroke="var(--court-primary)" stroke-width="3" rx="2"/>
+        <line x1="20" y1="300" x2="380" y2="300" stroke="var(--court-primary)" stroke-width="3"/>
+        <line x1="200" y1="20" x2="200" y2="580" stroke="var(--court-primary)" stroke-width="1.5"/>
+        <rect x="70" y="80" width="260" height="100" stroke="var(--court-primary)" stroke-width="1.5"/>
+        <rect x="70" y="420" width="260" height="100" stroke="var(--court-primary)" stroke-width="1.5"/>
+        <line x1="70" y1="130" x2="330" y2="130" stroke="var(--court-primary)" stroke-width="1.5"/>
+        <line x1="70" y1="470" x2="330" y2="470" stroke="var(--court-primary)" stroke-width="1.5"/>
+      </svg>
+
+      <h1>Shuttle Path</h1>
+      <div class="subtitle">羽毛球教学知识平台</div>
+      <div class="desc">从握拍到杀球，从站位到全场步法——系统化的羽毛球知识库与教学日记。</div>
+      <div class="btns">
+        <button class="btn-primary">浏览知识库 →</button>
+        <button class="btn-outline">教学日记</button>
+      </div>
+    </div>
+
+    <div class="f2-content">
+      <div class="f1-section-label">Knowledge Base</div>
+      <div class="f1-section-title">知识库</div>
+      <div class="f1-cards">
+        <div class="f1-card">
+          <div class="f1-card-icon">🏸</div>
+          <h4>手法</h4>
+          <p>握拍、发球、后场、前场技术</p>
+        </div>
+        <div class="f1-card">
+          <div class="f1-card-icon">👟</div>
+          <h4>步法</h4>
+          <p>站位、启动、上网、后退步法</p>
+        </div>
+        <div class="f1-card">
+          <div class="f1-card-icon">📊</div>
+          <h4>运动科学</h4>
+          <p>热身放松、发力原理、体能训练</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== F3: Colored Category Cards ===== -->
+<section class="demo-section f3-demo" id="f3">
+  <div class="section-header">
+    <div class="badge" style="background:#FEF3C7; color:#B45309;">方案 F3</div>
+    <h2>知识库卡片 → 球场色底</h2>
+    <p>三个分类用球场的不同区域颜色，Bento 布局 + 彩色色块，页面绝对不会"一片白"。</p>
+  </div>
+
+  <div class="f3-frame">
+    <div class="f1-nav">
+      <span class="f1-nav-brand">Shuttle Path</span>
+      <div class="f1-nav-links">
+        <a>首页</a>
+        <a style="color:var(--court-primary);font-weight:600">知识库</a>
+        <a>教学日记</a>
+      </div>
+    </div>
+
+    <div class="f3-hero">
+      <h1>知识库</h1>
+      <div class="subtitle">系统化的羽毛球技术知识</div>
+    </div>
+
+    <div class="f3-bento">
+      <div class="f3-card big primary-bg">
+        <div class="f3-card-en">Strokes</div>
+        <div class="f3-card-title">手法</div>
+        <div class="f3-card-desc">握拍、发球、后场高远球、吊球、杀球、前场搓球、勾球、推球、中场接杀、驱球</div>
+        <div class="f3-card-count">5 篇文章</div>
+      </div>
+      <div class="f3-card surround-bg">
+        <div class="f3-card-en">Footwork</div>
+        <div class="f3-card-title">步法</div>
+        <div class="f3-card-desc">站位、启动、上网步法、后退步法、全场串联</div>
+        <div class="f3-card-count">3 篇文章</div>
+      </div>
+      <div class="f3-card accent-bg">
+        <div class="f3-card-en">Sports Science</div>
+        <div class="f3-card-title">运动科学</div>
+        <div class="f3-card-desc">热身放松、发力原理、体能训练、伤病预防</div>
+        <div class="f3-card-count">2 篇文章</div>
+      </div>
+    </div>
+
+    <div class="f3-lessons">
+      <div class="f1-section-label" style="color:var(--accent)">Lessons</div>
+      <div class="f1-section-title">最新教学日记</div>
+      <div class="f1-lesson-cards">
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:var(--court-primary)"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年3月12日</div>
+            <div class="f1-lesson-title">正手高远球的发力链</div>
+          </div>
+        </div>
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:var(--accent)"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年3月5日</div>
+            <div class="f1-lesson-title">网前搓球手感训练</div>
+          </div>
+        </div>
+        <div class="f1-lesson-card">
+          <div class="f1-lesson-bar" style="background:#FB7185"></div>
+          <div class="f1-lesson-body">
+            <div class="f1-lesson-date">2026年2月28日</div>
+            <div class="f1-lesson-title">全场步法串联练习</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== F4: Court Layout ===== -->
+<section class="demo-section f4-demo" id="f4">
+  <div class="section-header">
+    <div class="badge" style="background:#FCE7F3; color:#BE185D;">方案 F4</div>
+    <h2>整页 → 球场俯视图布局</h2>
+    <p>整个首页就是一个球场的俯视图。深色外围 = 导航/页脚，内场 = 内容区域，球场线条 = 分隔线。创意极高但实现复杂。</p>
+  </div>
+
+  <div class="f4-frame">
+    <div class="f4-court">
+      <div class="f4-nav">
+        <span class="f4-nav-brand">Shuttle Path</span>
+        <div class="f4-nav-links">
+          <a>首页</a>
+          <a>知识库</a>
+          <a>教学日记</a>
+        </div>
+      </div>
+
+      <div class="f4-inner">
+        <!-- Top half = Hero -->
+        <div class="f4-half">
+          <div class="f4-zone-label">发球区 · Service Area</div>
+          <h1>Shuttle Path</h1>
+          <div class="subtitle">羽毛球教学知识平台</div>
+          <div class="desc">从握拍到杀球，系统化的羽毛球知识库与教学日记</div>
+          <div class="f1-hero btns" style="background:none;padding:0">
+            <button class="btn-primary" style="background:white;color:var(--court-primary)">浏览知识库 →</button>
+            <button class="btn-outline">教学日记</button>
+          </div>
+        </div>
+
+        <!-- Bottom half = Knowledge -->
+        <div class="f4-half">
+          <div class="f4-zone-label">后场 · Backcourt</div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);margin-bottom:4px">Knowledge Base</div>
+          <div style="font-size:18px;font-weight:700;color:white;margin-bottom:16px">知识库</div>
+          <div class="f4-grid">
+            <div class="f4-cell">
+              <h4>🏸 手法</h4>
+              <p>握拍、发球、后场、前场技术</p>
+            </div>
+            <div class="f4-cell">
+              <h4>👟 步法</h4>
+              <p>站位、启动、上网、后退步法</p>
+            </div>
+            <div class="f4-cell">
+              <h4>📊 运动科学</h4>
+              <p>热身放松、发力原理</p>
+            </div>
+            <div class="f4-cell">
+              <h4>📝 教学日记</h4>
+              <p>每一次训练的思考与沉淀</p>
+            </div>
+          </div>
+          <div class="f4-service-line"></div>
+        </div>
+      </div>
+
+      <div class="f4-footer">Shuttle Path · 羽毛球教学知识平台</div>
+    </div>
+  </div>
+</section>
+
+<div style="padding:60px 20px 80px;text-align:center;color:#9CA3AF;font-size:13px">
+  切换顶部的球场配色主题，观察每个方案在不同颜色下的效果
+</div>
+
+<script>
+const themes = {
+  'classic-green': {
+    '--court-primary': '#1B8A4E',
+    '--court-primary-light': '#2DA060',
+    '--court-primary-dark': '#147A3E',
+    '--court-surround': '#147A3E',
+    '--court-line': '#ffffff',
+    '--court-50': '#E8F5EE',
+    '--court-100': '#C8EBD5',
+    '--accent': '#F59E0B',
+    '--accent-light': '#FBBF24',
+    '--accent-50': '#FFFBEB',
+  },
+  'blue-green': {
+    '--court-primary': '#1565C0',
+    '--court-primary-light': '#1E88E5',
+    '--court-primary-dark': '#0D47A1',
+    '--court-surround': '#1B8A4E',
+    '--court-line': '#ffffff',
+    '--court-50': '#E3F2FD',
+    '--court-100': '#BBDEFB',
+    '--accent': '#F59E0B',
+    '--accent-light': '#FBBF24',
+    '--accent-50': '#FFFBEB',
+  },
+  'red-blue': {
+    '--court-primary': '#C62828',
+    '--court-primary-light': '#E53935',
+    '--court-primary-dark': '#B71C1C',
+    '--court-surround': '#1565C0',
+    '--court-line': '#ffffff',
+    '--court-50': '#FFEBEE',
+    '--court-100': '#FFCDD2',
+    '--accent': '#FBBF24',
+    '--accent-light': '#FCD34D',
+    '--accent-50': '#FFFBEB',
+  },
+  'ocean-blue': {
+    '--court-primary': '#1565C0',
+    '--court-primary-light': '#1E88E5',
+    '--court-primary-dark': '#0D47A1',
+    '--court-surround': '#0D47A1',
+    '--court-line': '#ffffff',
+    '--court-50': '#E3F2FD',
+    '--court-100': '#BBDEFB',
+    '--accent': '#FF7043',
+    '--accent-light': '#FF8A65',
+    '--accent-50': '#FBE9E7',
+  },
+  'green-orange': {
+    '--court-primary': '#1B8A4E',
+    '--court-primary-light': '#2DA060',
+    '--court-primary-dark': '#147A3E',
+    '--court-surround': '#D4553A',
+    '--court-line': '#ffffff',
+    '--court-50': '#E8F5EE',
+    '--court-100': '#C8EBD5',
+    '--accent': '#D4553A',
+    '--accent-light': '#E57A5F',
+    '--accent-50': '#FFF0ED',
+  },
+  'grey-blue': {
+    '--court-primary': '#455A64',
+    '--court-primary-light': '#546E7A',
+    '--court-primary-dark': '#37474F',
+    '--court-surround': '#263238',
+    '--court-line': '#ffffff',
+    '--court-50': '#ECEFF1',
+    '--court-100': '#CFD8DC',
+    '--accent': '#26A69A',
+    '--accent-light': '#4DB6AC',
+    '--accent-50': '#E0F2F1',
+  },
+};
+
+function setTheme(name) {
+  const vars = themes[name];
+  if (!vars) return;
+  const root = document.documentElement;
+  for (const [k, v] of Object.entries(vars)) {
+    root.style.setProperty(k, v);
+  }
+  // Update active state
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btn-' + name);
+  if (btn) btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>

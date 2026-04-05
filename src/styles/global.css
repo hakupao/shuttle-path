@@ -17,22 +17,25 @@
 @theme {
   /* --- Color Palette --- */
 
-  /* 文字色 */
+  /* 文字色（ink-muted 修复 WCAG AA 对比度：2.9→5.0） */
   --color-ink: #1F2937;
   --color-ink-light: #374151;
-  --color-ink-muted: #9CA3AF;
+  --color-ink-muted: #6B7280;
 
-  /* 背景色 */
+  /* 背景色（paper-dark 加深一档，边框可感知） */
   --color-paper: #FFFFFF;
   --color-paper-warm: #FEFCF8;
-  --color-paper-dark: #F3F4F6;
+  --color-paper-dark: #E5E7EB;
 
-  /* 主题色：活力绿 */
-  --color-court: #10B981;
-  --color-court-light: #34D399;
-  --color-court-dark: #059669;
-  --color-court-50: #ECFDF5;
-  --color-court-100: #D1FAE5;
+  /* 主题色：球场绿（真实球场地胶色，替换 Tailwind Emerald） */
+  --color-court: #1B8A4E;
+  --color-court-light: #2DA060;
+  --color-court-dark: #147A3E;
+  --color-court-50: #E8F5EE;
+  --color-court-100: #C8EBD5;
+
+  /* 球场外围色 */
+  --color-court-surround: #147A3E;
 
   /* 活力色：阳光橙 */
   --color-shuttle: #F59E0B;
@@ -46,6 +49,19 @@
   /* 手绘线条色 */
   --color-sketch: #3f3a36;
   --color-sketch-light: #9e9890;
+
+  /* 知识库分类色系 */
+  --color-cat-strokes: #1B8A4E;
+  --color-cat-strokes-dark: #147A3E;
+  --color-cat-strokes-50: #E8F5EE;
+
+  --color-cat-footwork: #1565C0;
+  --color-cat-footwork-dark: #0D47A1;
+  --color-cat-footwork-50: #E3F2FD;
+
+  --color-cat-science: #D4553A;
+  --color-cat-science-dark: #B93E27;
+  --color-cat-science-50: #FFF0ED;
 
   /* --- Typography --- */
   --font-display: 'Smiley Sans', 'ZCOOL QingKe HuangYou', 'Noto Sans SC', system-ui, sans-serif;
@@ -214,7 +230,7 @@
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--color-court-100);
+  border-bottom: 2px solid var(--prose-accent-light, var(--color-court-100));
   color: var(--color-ink);
 }
 
@@ -240,7 +256,7 @@
 }
 
 .prose-knowledge li::marker {
-  color: var(--color-court);
+  color: var(--prose-accent, var(--color-court));
 }
 
 .prose-knowledge strong {
@@ -310,7 +326,7 @@
 .prose-knowledge th {
   text-align: left;
   padding: 0.75rem 1rem;
-  background-color: var(--color-court);
+  background-color: var(--prose-accent, var(--color-court));
   color: white;
   font-weight: 600;
 }
@@ -370,6 +386,22 @@
   width: 100%;
 }
 
+/* 首页白字 Nav 下划线 */
+.nav-link-home::after {
+  background-color: white;
+}
+
+/* 知识库列表页 — 分类色 hover 态 */
+a[style*="--cat-hover-bg"]:hover {
+  background-color: var(--cat-hover-bg);
+}
+a[style*="--cat-color"]:hover h3 {
+  color: var(--cat-color);
+}
+a[style*="--cat-color"]:hover svg {
+  color: var(--cat-color);
+}
+
 /* ============================================
    Hand-drawn Border Filter (手绘毛边效果)
    ============================================ */
@@ -385,7 +417,7 @@
 .divider-wavy {
   width: 100%;
   height: 12px;
-  opacity: 0.2;
+  opacity: 0.35;
   background: none;
   position: relative;
 }

@@ -1,4 +1,8 @@
 ---
+interface Props {
+  isHome?: boolean;
+}
+const { isHome = false } = Astro.props;
 const pathname = Astro.url.pathname;
 
 const links = [
@@ -8,42 +12,55 @@ const links = [
 ];
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-paper-dark">
+<header class:list={[
+  "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
+  isHome
+    ? "bg-court-surround/95 backdrop-blur-sm border-b border-white/10"
+    : "bg-white border-b border-paper-dark",
+]}>
   <nav class="max-w-6xl mx-auto px-(--spacing-page) flex items-center justify-between h-16">
     <!-- Brand -->
     <a href="/" class="flex items-center gap-2.5 group">
-      <!-- 占位 Logo：等手绘 SVG 交付后替换 -->
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" class="text-court transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" class:list={[
+        "transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12",
+        isHome ? "text-white" : "text-court",
+      ]}>
         <circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         <path d="M12 13 L12 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         <path d="M7 19 L17 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span class="font-display text-xl text-ink">
+      <span class:list={["font-display text-xl", isHome ? "text-white" : "text-ink"]}>
         Shuttle Path
       </span>
     </a>
 
     <!-- Desktop Links -->
     <div class="hidden md:flex items-center gap-10">
-      {links.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'nav-link text-sm font-medium tracking-wide transition-colors duration-200',
-            pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-              ? 'text-court active'
-              : 'text-ink-light hover:text-court',
-          ]}
-        >
-          {link.label}
-        </a>
-      ))}
+      {links.map((link) => {
+        const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'nav-link text-sm font-medium tracking-wide transition-colors duration-200',
+              isHome
+                ? (isActive ? 'text-white active' : 'text-white/70 hover:text-white')
+                : (isActive ? 'text-court active' : 'text-ink-light hover:text-court'),
+            ]}
+          >
+            {link.label}
+          </a>
+        );
+      })}
     </div>
 
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden p-2 -mr-2 text-ink-light hover:text-court transition-colors"
+      class:list={[
+        "md:hidden p-2 -mr-2 transition-colors",
+        isHome ? "text-white/70 hover:text-white" : "text-ink-light hover:text-court",
+      ]}
       aria-label="打开菜单"
     >
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -60,20 +77,26 @@ const links = [
     class="md:hidden overflow-hidden transition-all duration-400 ease-[--ease-out-expo]"
     style="max-height: 0;"
   >
-    <div class="px-(--spacing-page) pb-6 pt-2 flex flex-col gap-1 border-t border-paper-dark">
-      {links.map((link) => (
-        <a
-          href={link.href}
-          class:list={[
-            'squircle block py-3 px-4 rounded-xl text-sm font-medium transition-colors duration-200',
-            pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-              ? 'text-court bg-court-50'
-              : 'text-ink-light hover:text-court hover:bg-court-50/50',
-          ]}
-        >
-          {link.label}
-        </a>
-      ))}
+    <div class:list={[
+      "px-(--spacing-page) pb-6 pt-2 flex flex-col gap-1 border-t",
+      isHome ? "border-white/10" : "border-paper-dark",
+    ]}>
+      {links.map((link) => {
+        const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              'squircle block py-3 px-4 rounded-xl text-sm font-medium transition-colors duration-200',
+              isHome
+                ? (isActive ? 'text-white bg-white/15' : 'text-white/70 hover:text-white hover:bg-white/10')
+                : (isActive ? 'text-court bg-court-50' : 'text-ink-light hover:text-court hover:bg-court-50/50'),
+            ]}
+          >
+            {link.label}
+          </a>
+        );
+      })}
     </div>
   </div>
 </header>

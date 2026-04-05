@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import CourtSVG from '@/components/common/CourtSVG.astro';
 
 interface Props {
   title: string;
@@ -17,55 +18,72 @@ const categoryLabels: Record<string, string> = {
   'sports-science': '运动科学',
 };
 
+const categoryColors: Record<string, { bg: string; dark: string; light: string }> = {
+  strokes:          { bg: 'var(--color-cat-strokes)',  dark: 'var(--color-cat-strokes-dark)',  light: 'var(--color-cat-strokes-50)' },
+  footwork:         { bg: 'var(--color-cat-footwork)', dark: 'var(--color-cat-footwork-dark)', light: 'var(--color-cat-footwork-50)' },
+  'sports-science': { bg: 'var(--color-cat-science)',  dark: 'var(--color-cat-science-dark)',  light: 'var(--color-cat-science-50)' },
+};
+
+const colors = categoryColors[category] || categoryColors.strokes;
+
 const formatDate = (date: Date) =>
   date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="max-w-3xl mx-auto px-(--spacing-page) py-10 md:py-20">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs sm:text-sm text-ink-muted mb-6 md:mb-8">
-      <a href="/knowledge/" class="hover:text-court transition-colors">知识库</a>
-      <span class="text-paper-dark">/</span>
-      <a href={`/knowledge/?category=${category}`} class="hover:text-court transition-colors">
-        {categoryLabels[category] || category}
-      </a>
-    </nav>
-
-    <!-- Article Header -->
-    <header class="mb-8 md:mb-10">
-      <h1 class="heading-display text-ink leading-tight mb-3 md:mb-4">
-        {title}
-      </h1>
-      <p class="text-ink-light text-base md:text-lg leading-relaxed mb-4 md:mb-5">
-        {description}
-      </p>
-      <div class="flex flex-wrap items-center gap-3 md:gap-4 text-xs sm:text-sm text-ink-muted">
-        <time datetime={publishDate.toISOString()}>
-          {formatDate(publishDate)}
-        </time>
-        {updateDate && (
-          <span class="flex items-center gap-1">
-            · 更新于 <time datetime={updateDate.toISOString()}>{formatDate(updateDate)}</time>
-          </span>
-        )}
+  <article>
+    <!-- 文章 Header — 分类球场色背景 -->
+    <header class="relative overflow-hidden" style={`background-color: ${colors.bg}`}>
+      <!-- CourtSVG 半透明装饰 -->
+      <div class="absolute right-4 md:right-[8%] top-1/2 -translate-y-1/2 pointer-events-none">
+        <CourtSVG class="w-28 md:w-40 opacity-[0.08]" strokeColor="white" strokeWidth={2} />
       </div>
-      <div class="divider-wavy mt-6"></div>
+
+      <div class="max-w-3xl mx-auto px-(--spacing-page) pt-24 md:pt-32 pb-10 md:pb-14 relative">
+        <!-- 面包屑 — 白色文字 -->
+        <nav class="flex items-center gap-2 text-xs sm:text-sm text-white/60 mb-6 md:mb-8">
+          <a href="/knowledge/" class="hover:text-white transition-colors">知识库</a>
+          <span class="text-white/30">/</span>
+          <a href={`/knowledge/?category=${category}`} class="hover:text-white transition-colors">
+            {categoryLabels[category] || category}
+          </a>
+        </nav>
+
+        <!-- 标题和元信息 — 白色文字 -->
+        <h1 class="heading-display text-white leading-tight mb-3 md:mb-4">
+          {title}
+        </h1>
+        <p class="text-white/80 text-base md:text-lg leading-relaxed mb-4 md:mb-5">
+          {description}
+        </p>
+        <div class="flex flex-wrap items-center gap-3 md:gap-4 text-xs sm:text-sm text-white/50">
+          <time datetime={publishDate.toISOString()}>
+            {formatDate(publishDate)}
+          </time>
+          {updateDate && (
+            <span class="flex items-center gap-1">
+              · 更新于 <time datetime={updateDate.toISOString()}>{formatDate(updateDate)}</time>
+            </span>
+          )}
+        </div>
+      </div>
     </header>
 
-    <!-- Article Body -->
-    <div class="prose-knowledge">
-      <slot />
-    </div>
+    <!-- 文章正文 — 白底 -->
+    <div class="max-w-3xl mx-auto px-(--spacing-page) py-10 md:py-16">
+      <div class="prose-knowledge" style={`--prose-accent: ${colors.bg}; --prose-accent-light: ${colors.light}`}>
+        <slot />
+      </div>
 
-    <!-- Bottom divider -->
-    <div class="mt-16 pt-8 border-t border-paper-dark">
-      <a href="/knowledge/" class="text-sm text-ink-muted hover:text-court transition-colors inline-flex items-center gap-2">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
-        </svg>
-        返回知识库
-      </a>
+      <!-- Bottom divider -->
+      <div class="mt-16 pt-8 border-t border-paper-dark">
+        <a href="/knowledge/" class="text-sm text-ink-muted hover:text-court transition-colors inline-flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
+          </svg>
+          返回知识库
+        </a>
+      </div>
     </div>
   </article>
 </BaseLayout>

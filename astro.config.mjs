@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://shuttle-path.pages.dev',
   integrations: [react(), mdx()],
+  server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
   },

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shuttle Path — V2 融合方案 + 知识库文章页 Demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --court: #1B8A4E;
+    --court-light: #2DA060;
+    --court-dark: #147A3E;
+    --court-surround: #147A3E;
+    --court-50: #E8F5EE;
+    --court-100: #C8EBD5;
+    --accent: #F59E0B;
+    --accent-50: #FFFBEB;
+    --coral: #FB7185;
+    --ink: #1F2937;
+    --ink-light: #374151;
+    --ink-muted: #6B7280;
+    --paper: #FFFFFF;
+    --paper-warm: #FEFCF8;
+    --paper-dark: #E5E7EB;
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    /* category colors */
+    --cat-strokes: #1B8A4E;
+    --cat-strokes-dark: #147A3E;
+    --cat-strokes-50: #E8F5EE;
+    --cat-footwork: #1565C0;
+    --cat-footwork-dark: #0D47A1;
+    --cat-footwork-50: #E3F2FD;
+    --cat-science: #D4553A;
+    --cat-science-dark: #B93E27;
+    --cat-science-50: #FFF0ED;
+  }
+
+  body {
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+    color: var(--ink);
+    background: #f5f5f5;
+    line-height: 1.7;
+  }
+
+  /* ===== Top Nav ===== */
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #111827; color: #ccc;
+    padding: 0 16px; height: 44px;
+    display: flex; align-items: center; gap: 10px;
+    overflow-x: auto;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .top-bar-label { font-size: 12px; color: #9CA3AF; font-weight: 600; white-space: nowrap; }
+  .tb { padding: 4px 12px; border: 1.5px solid transparent; border-radius: 6px;
+    background: rgba(255,255,255,0.07); color: #bbb; font-size: 11px; font-weight: 500;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .tb:hover { background: rgba(255,255,255,0.12); }
+  .tb.on { border-color: #F59E0B; color: #FBBF24; background: rgba(245,158,11,0.1); }
+  .sw { display: inline-flex; width: 12px; height: 12px; border-radius: 2px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15); margin-right: 5px; vertical-align: middle; }
+  .sh { display: inline-block; width: 6px; height: 12px; }
+
+  /* Section tabs */
+  .sec-tabs {
+    position: fixed; top: 44px; left: 0; right: 0; z-index: 99;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e7eb; padding: 6px 16px;
+    display: flex; gap: 6px;
+  }
+  .sec-tabs a {
+    padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: 500;
+    color: #6B7280; text-decoration: none; border: 1px solid #e5e7eb;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .sec-tabs a:hover { color: var(--court); border-color: var(--court); }
+
+  /* ===== Demo Section ===== */
+  .demo { margin-top: 88px; padding: 48px 16px; }
+  .demo + .demo { margin-top: 0; }
+  .demo-head { max-width: 900px; margin: 0 auto 32px; text-align: center; }
+  .demo-head h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+  .demo-head p { font-size: 14px; color: #6B7280; max-width: 560px; margin: 0 auto; }
+  .demo-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 16px;
+    font-size: 11px; font-weight: 600; margin-bottom: 10px;
+  }
+
+  /* ===== PART 1: Accurate Court SVG Reference ===== */
+  .court-ref { background: #eee; }
+  .court-ref-wrap {
+    max-width: 500px; margin: 0 auto;
+    background: white; border-radius: 16px; padding: 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .court-ref-wrap svg { width: 100%; height: auto; }
+  .dim-label { font-size: 9px; fill: #9CA3AF; font-family: monospace; }
+
+  /* ===== PART 2: Fusion Homepage ===== */
+  .fusion-bg { background: var(--court-surround); }
+  .fusion-wrap {
+    max-width: 1000px; margin: 0 auto;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  }
+  /* Nav in surround */
+  .fn { display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; color: rgba(255,255,255,0.85); }
+  .fn-brand { font-weight: 800; font-size: 17px; }
+  .fn-links { display: flex; gap: 20px; }
+  .fn-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 500; }
+  /* Court inner */
+  .fi {
+    margin: 0 14px; background: var(--court);
+    border: 2px solid rgba(255,255,255,0.3); border-radius: 3px;
+    position: relative; overflow: hidden;
+  }
+  .fi::after {
+    content: ''; position: absolute; inset: 0; opacity: 0.035; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  /* Hero */
+  .fh { padding: 56px 40px 48px; position: relative; z-index: 2; }
+  .fh h1 { font-size: clamp(32px,5.5vw,52px); font-weight: 800; color: white;
+    letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px; }
+  .fh .sub { font-size: clamp(15px,2.2vw,20px); color: rgba(255,255,255,0.85);
+    font-weight: 500; margin-bottom: 6px; }
+  .fh .desc { font-size: 13px; color: rgba(255,255,255,0.5); max-width: 380px;
+    margin-bottom: 24px; line-height: 1.7; }
+  .fh .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-w { display: inline-flex; align-items: center; gap: 6px; padding: 11px 24px;
+    background: white; color: var(--court); border: none; border-radius: 10px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s; }
+  .btn-w:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .btn-g { display: inline-flex; align-items: center; padding: 11px 24px;
+    background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  /* Court SVG watermark in hero */
+  .fh-court { position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+    opacity: 0.1; z-index: 1; }
+  /* Net divider */
+  .fnet { height: 3px; background: rgba(255,255,255,0.3); margin: 0 32px;
+    position: relative; z-index: 2; }
+  .fnet::before { content: ''; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%,-50%); width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3); background: var(--court); }
+  /* White zone */
+  .fwz { background: var(--paper); position: relative; z-index: 2; }
+  /* Knowledge */
+  .fk { padding: 40px 32px; }
+  .fk-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--court); font-weight: 600; margin-bottom: 3px; }
+  .fk-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; }
+  .fk-grid { display: grid; grid-template-columns: 3fr 2fr; grid-template-rows: auto auto; gap: 12px; }
+  .fk-card { padding: 20px; border-radius: 12px; border: 1.5px solid var(--paper-dark);
+    background: var(--paper); transition: all 0.25s var(--ease-out); cursor: pointer; }
+  .fk-card:hover { border-color: var(--court); transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+  .fk-card.feat { grid-row: span 2; background: var(--court-50); border-color: var(--court-100); }
+  .fk-card.feat:hover { background: var(--court-100); }
+  .fk-ic { width: 32px; height: 32px; border-radius: 8px; background: var(--court-50);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 10px;
+    font-size: 14px; }
+  .fk-card.feat .fk-ic { background: var(--court); color: white; }
+  .fk-en { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-muted); }
+  .fk-h { font-size: 15px; font-weight: 700; margin: 2px 0 4px; }
+  .fk-d { font-size: 12px; color: var(--ink-muted); line-height: 1.6; }
+  /* Court divider */
+  .fcd { height: 36px; background: var(--court); position: relative; overflow: hidden; z-index: 2; }
+  .fcd::before { content: ''; position: absolute; left: 12%; right: 12%; top: 50%;
+    height: 1px; background: rgba(255,255,255,0.3); }
+  .fcd::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 1px; background: rgba(255,255,255,0.2); }
+  /* Lessons */
+  .fl { padding: 40px 32px; background: var(--paper-warm); }
+  .fl-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .fl-card { display: flex; background: var(--paper); border-radius: 12px; overflow: hidden;
+    border: 1.5px solid var(--paper-dark); transition: all 0.25s var(--ease-out);
+    cursor: pointer; text-decoration: none; color: var(--ink); }
+  .fl-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    border-color: var(--court); }
+  .fl-card:nth-child(3n+1) { transform: rotate(-0.5deg); }
+  .fl-card:nth-child(3n+2) { transform: rotate(0.3deg); }
+  .fl-card:nth-child(3n+3) { transform: rotate(0.7deg); }
+  .fl-card:hover { transform: rotate(0) translateY(-2px) !important; }
+  .fl-bar { width: 4px; flex-shrink: 0; }
+  .fl-body { padding: 14px 16px; }
+  .fl-date { font-size: 11px; color: var(--ink-muted); }
+  .fl-t { font-size: 14px; font-weight: 700; margin-top: 3px; }
+  /* CTA */
+  .fcta { padding: 36px 32px; background: var(--court); text-align: center;
+    position: relative; z-index: 2; }
+  .fcta p { color: rgba(255,255,255,0.55); font-size: 13px; max-width: 360px; margin: 0 auto; }
+  /* Footer */
+  .ff { padding: 16px 28px; display: flex; justify-content: space-between;
+    color: rgba(255,255,255,0.3); font-size: 11px; }
+  .ff a { color: rgba(255,255,255,0.45); text-decoration: none; }
+
+  /* ===== PART 3: Knowledge Article Pages ===== */
+  .article-demo { background: #e8e8e8; }
+  .article-frame {
+    max-width: 1000px; margin: 0 auto;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+    background: var(--paper);
+  }
+  /* Article nav */
+  .an { display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 44px; background: white; border-bottom: 1px solid var(--paper-dark);
+    font-size: 13px; }
+  .an-brand { font-weight: 700; }
+  .an-links { display: flex; gap: 18px; }
+  .an-links a { text-decoration: none; font-weight: 500; font-size: 12px; }
+  /* Article header with court background */
+  .article-header {
+    position: relative;
+    padding: 48px 40px 40px;
+    overflow: hidden;
+    color: white;
+  }
+  .article-header::after {
+    content: ''; position: absolute; inset: 0; opacity: 0.035; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  /* Court SVG as background decoration */
+  .article-header .court-bg-svg {
+    position: absolute;
+    right: -20px; top: 50%; transform: translateY(-50%);
+    opacity: 0.1;
+  }
+  .article-header .breadcrumb {
+    font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .article-header .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; }
+  .article-header h1 {
+    font-size: clamp(24px, 4vw, 36px); font-weight: 800; line-height: 1.15;
+    margin-bottom: 10px; position: relative; z-index: 1;
+  }
+  .article-header .meta {
+    font-size: 12px; color: rgba(255,255,255,0.5);
+    position: relative; z-index: 1;
+  }
+  /* Article body */
+  .article-body {
+    padding: 40px;
+    max-width: 700px;
+  }
+  .article-body h2 {
+    font-size: 18px; font-weight: 700; margin: 28px 0 12px;
+    padding-bottom: 8px;
+  }
+  .article-body p {
+    font-size: 15px; color: var(--ink-light); margin-bottom: 16px; line-height: 1.85;
+  }
+  .article-body ul {
+    padding-left: 20px; margin-bottom: 16px;
+  }
+  .article-body li {
+    font-size: 14px; color: var(--ink-light); margin-bottom: 6px;
+  }
+
+  /* Category-specific colors */
+  .cat-strokes .article-header { background: var(--cat-strokes); }
+  .cat-strokes .article-body h2 { border-bottom: 2px solid var(--cat-strokes-50); color: var(--cat-strokes-dark); }
+  .cat-strokes .article-body li::marker { color: var(--cat-strokes); }
+  .cat-strokes .an-links .active { color: var(--cat-strokes); }
+
+  .cat-footwork .article-header { background: var(--cat-footwork); }
+  .cat-footwork .article-body h2 { border-bottom: 2px solid var(--cat-footwork-50); color: var(--cat-footwork-dark); }
+  .cat-footwork .article-body li::marker { color: var(--cat-footwork); }
+  .cat-footwork .an-links .active { color: var(--cat-footwork); }
+
+  .cat-science .article-header { background: var(--cat-science); }
+  .cat-science .article-body h2 { border-bottom: 2px solid var(--cat-science-50); color: var(--cat-science-dark); }
+  .cat-science .article-body li::marker { color: var(--cat-science); }
+  .cat-science .an-links .active { color: var(--cat-science); }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 768px) {
+    .fh { padding: 36px 20px 32px; }
+    .fh-court { display: none; }
+    .fk, .fl { padding: 28px 16px; }
+    .fk-grid { grid-template-columns: 1fr; }
+    .fk-card.feat { grid-row: auto; }
+    .fl-grid { grid-template-columns: 1fr; }
+    .article-header { padding: 32px 20px; }
+    .article-body { padding: 24px 20px; }
+    .article-header .court-bg-svg { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="top-bar">
+  <span class="top-bar-label">球场配色：</span>
+  <button class="tb on" onclick="setT('classic')" id="b-classic">
+    <span class="sw"><span class="sh" style="background:#1B8A4E"></span><span class="sh" style="background:#147A3E"></span></span>经典绿
+  </button>
+  <button class="tb" onclick="setT('blue-green')" id="b-blue-green">
+    <span class="sw"><span class="sh" style="background:#1565C0"></span><span class="sh" style="background:#1B8A4E"></span></span>蓝绿
+  </button>
+  <button class="tb" onclick="setT('red-blue')" id="b-red-blue">
+    <span class="sw"><span class="sh" style="background:#C62828"></span><span class="sh" style="background:#1565C0"></span></span>红蓝
+  </button>
+  <button class="tb" onclick="setT('ocean')" id="b-ocean">
+    <span class="sw"><span class="sh" style="background:#1565C0"></span><span class="sh" style="background:#0D47A1"></span></span>深海蓝
+  </button>
+  <button class="tb" onclick="setT('green-red')" id="b-green-red">
+    <span class="sw"><span class="sh" style="background:#1B8A4E"></span><span class="sh" style="background:#D4553A"></span></span>绿橙
+  </button>
+  <button class="tb" onclick="setT('grey')" id="b-grey">
+    <span class="sw"><span class="sh" style="background:#455A64"></span><span class="sh" style="background:#263238"></span></span>灰蓝
+  </button>
+</div>
+
+<nav class="sec-tabs">
+  <a href="#ref">球场标准图</a>
+  <a href="#home">融合首页</a>
+  <a href="#art-strokes">手法文章</a>
+  <a href="#art-footwork">步法文章</a>
+  <a href="#art-science">运动科学文章</a>
+</nav>
+
+<!-- ==========================================
+     PART 1: Accurate BWF Court SVG
+     ========================================== -->
+<section class="demo court-ref" id="ref">
+  <div class="demo-head">
+    <div class="demo-badge" style="background:#EEF2FF;color:#4F46E5">BWF Standard</div>
+    <h2>标准羽毛球场地尺寸图</h2>
+    <p>按照 BWF 国际标准绘制。全场 13.40m x 6.10m，所有线条精确还原。</p>
+  </div>
+
+  <div class="court-ref-wrap">
+    <!--
+      BWF Standard Badminton Court (Doubles)
+      全场: 13.40m × 6.10m
+      比例尺: 1m = 40px → viewBox 0 0 244 536
+      (6.10m=244px, 13.40m=536px)
+
+      关键 Y 坐标 (从顶部):
+        0    = 顶部底线 (back boundary)
+        30.4 = 双打后发球线 (0.76m)
+        188.8= 前发球线 (4.72m = 6.70-1.98)
+        268  = 球网 (6.70m)
+        347.2= 前发球线 (8.68m = 6.70+1.98)
+        505.6= 双打后发球线 (12.64m)
+        536  = 底部底线 (13.40m)
+
+      关键 X 坐标:
+        0    = 左双打边线
+        18.4 = 左单打边线 (0.46m)
+        122  = 中线 (3.05m)
+        225.6= 右单打边线 (5.64m)
+        244  = 右双打边线
+    -->
+    <svg viewBox="-30 -30 304 596" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background: surround area -->
+      <rect x="-30" y="-30" width="304" height="596" fill="#147A3E" rx="4"/>
+      <!-- Playing surface -->
+      <rect x="-2" y="-2" width="248" height="540" fill="#1B8A4E" rx="1"/>
+
+      <!-- === OUTER BOUNDARY (doubles) === -->
+      <rect x="0" y="0" width="244" height="536" stroke="white" stroke-width="2.5" rx="0.5"/>
+
+      <!-- === SINGLES SIDELINES === -->
+      <line x1="18.4" y1="0" x2="18.4" y2="536" stroke="white" stroke-width="1.6"/>
+      <line x1="225.6" y1="0" x2="225.6" y2="536" stroke="white" stroke-width="1.6"/>
+
+      <!-- === NET (center horizontal) === -->
+      <line x1="0" y1="268" x2="244" y2="268" stroke="white" stroke-width="2.5"/>
+
+      <!-- === SHORT SERVICE LINES === -->
+      <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke="white" stroke-width="1.6"/>
+      <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke="white" stroke-width="1.6"/>
+
+      <!-- === DOUBLES LONG SERVICE LINES === -->
+      <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke="white" stroke-width="1.6"/>
+      <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke="white" stroke-width="1.6"/>
+
+      <!-- === CENTER LINES (only in service areas) === -->
+      <!-- Top half: from back boundary to short service line -->
+      <line x1="122" y1="0" x2="122" y2="188.8" stroke="white" stroke-width="1.6"/>
+      <!-- Bottom half: from short service line to back boundary -->
+      <line x1="122" y1="347.2" x2="122" y2="536" stroke="white" stroke-width="1.6"/>
+
+      <!-- === DIMENSION LABELS === -->
+      <!-- Width -->
+      <text x="122" y="-12" text-anchor="middle" class="dim-label">6.10m</text>
+      <!-- Length -->
+      <text x="-14" y="268" text-anchor="middle" class="dim-label" transform="rotate(-90 -14 268)">13.40m</text>
+      <!-- Net label -->
+      <text x="252" y="271" class="dim-label" font-size="8" fill="#ffffff" opacity="0.5">NET</text>
+      <!-- Service line labels -->
+      <text x="232" y="186" class="dim-label" font-size="7" fill="#ffffff" opacity="0.35">1.98m</text>
+      <text x="232" y="34" class="dim-label" font-size="7" fill="#ffffff" opacity="0.35">0.76m</text>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     PART 2: Fusion Homepage with accurate court
+     ========================================== -->
+<section class="demo fusion-bg" id="home">
+  <div class="demo-head">
+    <div class="demo-badge" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9)">F1+F4 融合方案</div>
+    <h2 style="color:white">首页 — 球场结构布局</h2>
+    <p style="color:rgba(255,255,255,0.5)">外围深色框 + 球场色 Hero + 白色内容区 + 球场线条分隔</p>
+  </div>
+
+  <div class="fusion-wrap">
+    <nav class="fn">
+      <span class="fn-brand">Shuttle Path</span>
+      <div class="fn-links"><a>首页</a><a>知识库</a><a>教学日记</a></div>
+    </nav>
+
+    <div class="fi">
+      <section class="fh">
+        <!-- Accurate court watermark -->
+        <svg class="fh-court" width="160" height="350" viewBox="-2 -2 248 540" fill="none">
+          <rect x="0" y="0" width="244" height="536" stroke="white" stroke-width="2.5" rx="0.5"/>
+          <line x1="18.4" y1="0" x2="18.4" y2="536" stroke="white" stroke-width="1.2"/>
+          <line x1="225.6" y1="0" x2="225.6" y2="536" stroke="white" stroke-width="1.2"/>
+          <line x1="0" y1="268" x2="244" y2="268" stroke="white" stroke-width="2.5"/>
+          <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke="white" stroke-width="1.2"/>
+          <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke="white" stroke-width="1.2"/>
+          <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke="white" stroke-width="1.2"/>
+          <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke="white" stroke-width="1.2"/>
+          <line x1="122" y1="0" x2="122" y2="188.8" stroke="white" stroke-width="1.2"/>
+          <line x1="122" y1="347.2" x2="122" y2="536" stroke="white" stroke-width="1.2"/>
+        </svg>
+
+        <h1>Shuttle Path</h1>
+        <p class="sub">羽毛球教学知识平台</p>
+        <p class="desc">从握拍到杀球，从站位到全场步法——系统化的羽毛球知识库与教学日记，帮助你建立完整的技术体系。</p>
+        <div class="ctas">
+          <button class="btn-w">浏览知识库 <span style="font-size:16px">→</span></button>
+          <button class="btn-g">教学日记</button>
+        </div>
+      </section>
+
+      <div class="fnet"></div>
+
+      <div class="fwz">
+        <section class="fk">
+          <div class="fk-label">Knowledge Base</div>
+          <div class="fk-title">知识库</div>
+          <div class="fk-grid">
+            <div class="fk-card feat">
+              <div class="fk-ic">🏸</div>
+              <div class="fk-en">Strokes</div>
+              <div class="fk-h">手法</div>
+              <div class="fk-d">握拍、发球、后场高远球、吊球、杀球、前场搓球、勾球、推球——从基础到进阶的完整体系。</div>
+            </div>
+            <div class="fk-card">
+              <div class="fk-ic">👟</div>
+              <div class="fk-en">Footwork</div>
+              <div class="fk-h">步法</div>
+              <div class="fk-d">站位、启动、上网、后退、全场串联</div>
+            </div>
+            <div class="fk-card">
+              <div class="fk-ic">📊</div>
+              <div class="fk-en">Sports Science</div>
+              <div class="fk-h">运动科学</div>
+              <div class="fk-d">热身放松、发力原理、体能、伤病预防</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="fcd"></div>
+
+        <section class="fl">
+          <div class="fk-label" style="color:var(--accent)">Lessons</div>
+          <div class="fk-title">最新教学日记</div>
+          <div class="fl-grid">
+            <a class="fl-card">
+              <div class="fl-bar" style="background:var(--court)"></div>
+              <div class="fl-body"><div class="fl-date">2026年3月12日</div><div class="fl-t">正手高远球的发力链</div></div>
+            </a>
+            <a class="fl-card">
+              <div class="fl-bar" style="background:var(--accent)"></div>
+              <div class="fl-body"><div class="fl-date">2026年3月5日</div><div class="fl-t">网前搓球手感训练</div></div>
+            </a>
+            <a class="fl-card">
+              <div class="fl-bar" style="background:var(--coral)"></div>
+              <div class="fl-body"><div class="fl-date">2026年2月28日</div><div class="fl-t">全场步法串联练习</div></div>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <div class="fcta"><p>Shuttle Path 是一个持续更新的羽毛球教学知识平台。</p></div>
+    </div>
+
+    <div class="ff"><span>Shuttle Path</span><a>GitHub</a></div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     PART 3: Knowledge Article — STROKES (Green)
+     ========================================== -->
+<section class="demo article-demo" id="art-strokes">
+  <div class="demo-head">
+    <div class="demo-badge" style="background:var(--cat-strokes-50);color:var(--cat-strokes)">手法 · Strokes</div>
+    <h2>知识库文章 — 手法色系（球场绿）</h2>
+    <p>每个分类有独立色系的球场背景 Header，球场线条作为装饰。下方是白底文章内容。</p>
+  </div>
+
+  <div class="article-frame cat-strokes">
+    <div class="an">
+      <span class="an-brand">Shuttle Path</span>
+      <div class="an-links">
+        <a>首页</a>
+        <a class="active" style="font-weight:600">知识库</a>
+        <a style="color:var(--ink-muted)">教学日记</a>
+      </div>
+    </div>
+    <div class="article-header">
+      <svg class="court-bg-svg" width="140" height="308" viewBox="-2 -2 248 540" fill="none">
+        <rect x="0" y="0" width="244" height="536" stroke="white" stroke-width="2.5" rx="0.5"/>
+        <line x1="18.4" y1="0" x2="18.4" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="225.6" y1="0" x2="225.6" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="0" y1="268" x2="244" y2="268" stroke="white" stroke-width="2.5"/>
+        <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="0" x2="122" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="347.2" x2="122" y2="536" stroke="white" stroke-width="1.2"/>
+      </svg>
+      <div class="breadcrumb"><a>知识库</a> / <a>手法</a></div>
+      <h1>正手握拍：所有技术的起点</h1>
+      <div class="meta">2026年3月15日 · 阅读约 5 分钟</div>
+    </div>
+    <div class="article-body">
+      <p>握拍是羽毛球最基础的技术环节，正确的握拍方式决定了你后续所有技术动作的上限。很多业余爱好者长期使用错误的握拍方式，导致发力不顺畅、击球角度受限。</p>
+      <h2>正手握拍要点</h2>
+      <ul>
+        <li>虎口对准拍框侧面的窄面</li>
+        <li>食指与拇指不完全环绕握紧，留有活动空间</li>
+        <li>手掌与拍柄之间保持约一个手指的空隙</li>
+        <li>握拍力度：非击球状态下放松，击球瞬间收紧</li>
+      </ul>
+      <h2>常见错误</h2>
+      <p>最常见的错误是"苍蝇拍"握法——虎口对准拍面宽面。这种握法虽然在正面击球时感觉自然，但严重限制了手腕的灵活性和击球角度的变化范围。</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     PART 3b: Knowledge Article — FOOTWORK (Blue)
+     ========================================== -->
+<section class="demo article-demo" id="art-footwork">
+  <div class="demo-head">
+    <div class="demo-badge" style="background:var(--cat-footwork-50);color:var(--cat-footwork)">步法 · Footwork</div>
+    <h2>知识库文章 — 步法色系（球场蓝）</h2>
+    <p>蓝色球场主题，同样的球场线条装饰，不同的色彩情绪。</p>
+  </div>
+
+  <div class="article-frame cat-footwork">
+    <div class="an">
+      <span class="an-brand">Shuttle Path</span>
+      <div class="an-links">
+        <a>首页</a>
+        <a class="active" style="font-weight:600">知识库</a>
+        <a style="color:var(--ink-muted)">教学日记</a>
+      </div>
+    </div>
+    <div class="article-header">
+      <svg class="court-bg-svg" width="140" height="308" viewBox="-2 -2 248 540" fill="none">
+        <rect x="0" y="0" width="244" height="536" stroke="white" stroke-width="2.5" rx="0.5"/>
+        <line x1="18.4" y1="0" x2="18.4" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="225.6" y1="0" x2="225.6" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="0" y1="268" x2="244" y2="268" stroke="white" stroke-width="2.5"/>
+        <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="0" x2="122" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="347.2" x2="122" y2="536" stroke="white" stroke-width="1.2"/>
+      </svg>
+      <div class="breadcrumb"><a>知识库</a> / <a>步法</a></div>
+      <h1>启动步：快速移动的第一步</h1>
+      <div class="meta">2026年3月10日 · 阅读约 4 分钟</div>
+    </div>
+    <div class="article-body">
+      <p>启动步是所有羽毛球步法的起点。对手击球的瞬间，你需要通过一个小跳步来完成重心的调整，让身体进入随时可以向任何方向移动的状态。</p>
+      <h2>启动步的时机</h2>
+      <ul>
+        <li>在对手击球的瞬间完成小跳步</li>
+        <li>双脚略宽于肩，重心降低</li>
+        <li>前脚掌着地，脚跟微微离地</li>
+        <li>身体略前倾，保持弹性</li>
+      </ul>
+      <h2>常见错误</h2>
+      <p>很多初学者忽略启动步，直接从静止状态起步，导致第一步反应慢、移动方向不灵活。</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     PART 3c: Knowledge Article — SCIENCE (Orange-Red)
+     ========================================== -->
+<section class="demo article-demo" id="art-science">
+  <div class="demo-head">
+    <div class="demo-badge" style="background:var(--cat-science-50);color:var(--cat-science)">运动科学 · Sports Science</div>
+    <h2>知识库文章 — 运动科学色系（球场橙红）</h2>
+    <p>橙红色球场主题，传递运动的热情与力量。</p>
+  </div>
+
+  <div class="article-frame cat-science">
+    <div class="an">
+      <span class="an-brand">Shuttle Path</span>
+      <div class="an-links">
+        <a>首页</a>
+        <a class="active" style="font-weight:600">知识库</a>
+        <a style="color:var(--ink-muted)">教学日记</a>
+      </div>
+    </div>
+    <div class="article-header">
+      <svg class="court-bg-svg" width="140" height="308" viewBox="-2 -2 248 540" fill="none">
+        <rect x="0" y="0" width="244" height="536" stroke="white" stroke-width="2.5" rx="0.5"/>
+        <line x1="18.4" y1="0" x2="18.4" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="225.6" y1="0" x2="225.6" y2="536" stroke="white" stroke-width="1.2"/>
+        <line x1="0" y1="268" x2="244" y2="268" stroke="white" stroke-width="2.5"/>
+        <line x1="18.4" y1="188.8" x2="225.6" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="347.2" x2="225.6" y2="347.2" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="30.4" x2="225.6" y2="30.4" stroke="white" stroke-width="1.2"/>
+        <line x1="18.4" y1="505.6" x2="225.6" y2="505.6" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="0" x2="122" y2="188.8" stroke="white" stroke-width="1.2"/>
+        <line x1="122" y1="347.2" x2="122" y2="536" stroke="white" stroke-width="1.2"/>
+      </svg>
+      <div class="breadcrumb"><a>知识库</a> / <a>运动科学</a></div>
+      <h1>热身与放松：被忽视的训练核心</h1>
+      <div class="meta">2026年3月8日 · 阅读约 6 分钟</div>
+    </div>
+    <div class="article-body">
+      <p>很多爱好者到了球馆就直接开打，打完就走。但科学的热身和放松不仅能显著降低受伤概率，还能提升训练效果和身体恢复速度。</p>
+      <h2>热身的正确顺序</h2>
+      <ul>
+        <li>全身轻度有氧（慢跑/跳绳 3-5 分钟）</li>
+        <li>动态拉伸（高抬腿、弓步走、侧滑步）</li>
+        <li>关节活动（手腕、脚踝、肩关节绕环）</li>
+        <li>专项热身（轻挥拍、颠球、短距离移动）</li>
+      </ul>
+      <h2>放松要点</h2>
+      <p>训练后的静态拉伸每个动作保持 15-30 秒，重点关注大腿后侧、小腿、肩部和手腕。使用泡沫轴进行筋膜放松可以加速恢复。</p>
+    </div>
+  </div>
+</section>
+
+<div style="height:80px"></div>
+
+<script>
+const TH = {
+  classic: {
+    '--court':'#1B8A4E','--court-light':'#2DA060','--court-dark':'#147A3E',
+    '--court-surround':'#147A3E','--court-50':'#E8F5EE','--court-100':'#C8EBD5',
+    '--accent':'#F59E0B','--coral':'#FB7185',
+  },
+  'blue-green': {
+    '--court':'#1565C0','--court-light':'#1E88E5','--court-dark':'#0D47A1',
+    '--court-surround':'#1B8A4E','--court-50':'#E3F2FD','--court-100':'#BBDEFB',
+    '--accent':'#F59E0B','--coral':'#FB7185',
+  },
+  'red-blue': {
+    '--court':'#C62828','--court-light':'#E53935','--court-dark':'#B71C1C',
+    '--court-surround':'#1565C0','--court-50':'#FFEBEE','--court-100':'#FFCDD2',
+    '--accent':'#FBBF24','--coral':'#42A5F5',
+  },
+  ocean: {
+    '--court':'#1565C0','--court-light':'#1E88E5','--court-dark':'#0D47A1',
+    '--court-surround':'#0D47A1','--court-50':'#E3F2FD','--court-100':'#BBDEFB',
+    '--accent':'#FF7043','--coral':'#AB47BC',
+  },
+  'green-red': {
+    '--court':'#1B8A4E','--court-light':'#2DA060','--court-dark':'#147A3E',
+    '--court-surround':'#D4553A','--court-50':'#E8F5EE','--court-100':'#C8EBD5',
+    '--accent':'#D4553A','--coral':'#FB7185',
+  },
+  grey: {
+    '--court':'#455A64','--court-light':'#546E7A','--court-dark':'#37474F',
+    '--court-surround':'#263238','--court-50':'#ECEFF1','--court-100':'#CFD8DC',
+    '--accent':'#26A69A','--coral':'#FF7043',
+  },
+};
+function setT(k) {
+  const v = TH[k]; if (!v) return;
+  const r = document.documentElement;
+  for (const [p,c] of Object.entries(v)) r.style.setProperty(p,c);
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+  document.getElementById('b-'+k)?.classList.add('on');
+}
+</script>
+</body>
+</html>
