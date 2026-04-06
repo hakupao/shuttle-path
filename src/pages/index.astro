@@ -43,6 +43,29 @@ const formatDate = (date: Date) =>
       {/* 右侧单打边线 */}
       <div class="singles-line-right"></div>
 
+      {/* 场地灯光 */}
+      <div class="court-vignette" aria-hidden="true"></div>
+      <div id="spotlight" class="spotlight" aria-hidden="true"></div>
+
+      {/* 羽毛球飞行动画 */}
+      <div id="shuttle" class="shuttle" aria-hidden="true">
+        <div class="shuttle-shadow"></div>
+        <svg class="shuttle-svg" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 羽毛 — 5根辐射线 */}
+          <line x1="18" y1="28" x2="6" y2="4" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          <line x1="18" y1="28" x2="12" y2="2" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          <line x1="18" y1="28" x2="18" y2="1" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          <line x1="18" y1="28" x2="24" y2="2" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          <line x1="18" y1="28" x2="30" y2="4" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          {/* 羽毛轮廓弧线 */}
+          <path d="M6,4 Q12,0 18,1 Q24,0 30,4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" />
+          {/* 羽毛根部绑线 */}
+          <ellipse cx="18" cy="28" rx="6" ry="2" stroke="white" stroke-width="1.2" fill="none" />
+          {/* 球托 */}
+          <circle cx="18" cy="38" r="5" stroke="white" stroke-width="1.5" fill="white" fill-opacity="0.3" />
+        </svg>
+      </div>
+
       {/* ======================================================
           上半场
           ====================================================== */}
@@ -189,6 +212,182 @@ const formatDate = (date: Date) =>
 
 <style>
   /* ============================================
+     场地灯光效果 — 三层亮度
+     光照衰减遵循平方反比定律 I = 1/r²
+     近处亮度下降极快，远处逐渐趋平
+
+     Zone 1: 场外（最暗）— 灯光溢出后自然衰减到暗
+     Zone 2: 场内（中等）— 左3右3顶灯照射
+     Zone 3: 追踪射灯（最亮）— 跟随羽毛球
+     ============================================ */
+
+  /* --- Zone 1: 灯光溢出到场外 ---
+     不用硬切断！用 box-shadow 模拟光线从场内向外溢出
+     多层 shadow 模拟 1/r² 衰减：近=亮，远=极暗 */
+
+  /* --- Zone 2: 场内顶灯（左3右3共6盏） ---
+     每盏灯的 gradient stops 按 1/r² 分布：
+     0%=满亮, 15%=快速衰减, 35%=大部分光已散, 60%=微光, 100%=无光 */
+  .court-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      /* 左侧3盏灯 — 1/r² 衰减 */
+      radial-gradient(ellipse 55% 18% at 28% 18%,
+        rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      radial-gradient(ellipse 55% 18% at 26% 50%,
+        rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.09) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      radial-gradient(ellipse 55% 18% at 28% 82%,
+        rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      /* 右侧3盏灯 */
+      radial-gradient(ellipse 55% 18% at 72% 18%,
+        rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      radial-gradient(ellipse 55% 18% at 74% 50%,
+        rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.09) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      radial-gradient(ellipse 55% 18% at 72% 82%,
+        rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.08) 15%,
+        rgba(255,255,255,0.03) 35%, rgba(255,255,255,0.008) 60%, transparent 100%),
+      /* 整体暗角 — 四角压暗，1/r² 从中心往外 */
+      radial-gradient(ellipse 80% 60% at 50% 50%,
+        transparent 20%, rgba(0,0,0,0.10) 40%,
+        rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.40) 100%);
+  }
+
+  /* --- Zone 3: 追踪射灯 — 1/r² 衰减的聚光 --- */
+  .spotlight {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    width: 140px;
+    height: 140px;
+    top: 120px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.15) 15%,
+      rgba(255, 255, 255, 0.05) 35%,
+      rgba(255, 255, 255, 0.01) 55%,
+      transparent 80%
+    );
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  @media (min-width: 768px) {
+    .spotlight {
+      width: 200px;
+      height: 200px;
+    }
+  }
+
+  /* 无障碍 */
+  @media (prefers-reduced-motion: reduce) {
+    .spotlight {
+      display: none !important;
+    }
+  }
+
+  /* ============================================
+     羽毛球飞行动画
+     ============================================ */
+  .shuttle {
+    position: absolute;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    width: 32px;
+    height: 48px;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    will-change: transform, filter, opacity;
+  }
+  @media (min-width: 768px) {
+    .shuttle {
+      width: 40px;
+      height: 60px;
+      top: 160px;
+    }
+  }
+
+  .shuttle-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+    transition: filter 0.3s;
+  }
+
+  .shuttle-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 20px;
+    height: 8px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    filter: blur(3px);
+    will-change: transform, filter, opacity;
+  }
+
+  /* 入场动画 */
+  @keyframes shuttle-enter {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-120px) scale(0.4) rotate(-20deg);
+    }
+    50% {
+      opacity: 1;
+    }
+    85% {
+      transform: translateX(-50%) translateY(8px) scale(1.05) rotate(3deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
+    }
+  }
+
+  .shuttle.is-entering {
+    animation: shuttle-enter 0.9s var(--ease-out-expo) forwards;
+  }
+
+  .shuttle.is-active {
+    opacity: 1;
+  }
+
+  /* 内容区需要 will-change 避免模糊时闪烁 */
+  .court-row-lessons,
+  .court-row-knowledge,
+  .court-row-cats,
+  .court-row-footer {
+    will-change: filter, opacity;
+  }
+
+  /* 无障碍：减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .shuttle {
+      display: none !important;
+    }
+  }
+
+  /* ============================================
+     Zone 1: 场外暗化 — 模拟体育馆场外黑暗
+     ============================================ */
+  :global(body.bg-court-surround) {
+    --color-court-surround: #061a10;
+  }
+
+  /* ============================================
      球场容器 — 竖向细长，居中
      真实比例 13.4:6.1 ≈ 2.2:1
      ============================================ */
@@ -212,6 +411,14 @@ const formatDate = (date: Date) =>
     border-radius: 2px;
     position: relative;
     overflow: hidden;
+    /* 灯光溢出 — 多层 box-shadow 模拟 1/r² 衰减
+       近处亮（场地绿光溢出），远处渐暗到场外黑暗 */
+    box-shadow:
+      0 0 30px 5px rgba(27, 138, 78, 0.30),
+      0 0 60px 15px rgba(27, 138, 78, 0.18),
+      0 0 100px 30px rgba(27, 138, 78, 0.10),
+      0 0 160px 60px rgba(27, 138, 78, 0.05),
+      0 0 250px 100px rgba(27, 138, 78, 0.02);
   }
 
   /* 噪点纹理 */
@@ -477,4 +684,233 @@ const formatDate = (date: Date) =>
       label.style.transform = 'translateY(-50%)';
     }
   }
+
+  // ============================================
+  // 羽毛球飞行动画 v2 — 连续曲线 + 连续景深
+  // ============================================
+  (function initShuttleAnimation() {
+    const shuttle = document.getElementById('shuttle');
+    const courtEl = document.querySelector('.court') as HTMLElement | null;
+    if (!shuttle || !courtEl) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // 内容区域
+    const rows = {
+      hero: courtEl.querySelector('.court-row-hero') as HTMLElement,
+      lessons: courtEl.querySelector('.court-row-lessons') as HTMLElement,
+      netLine: courtEl.querySelector('.court-net') as HTMLElement,
+      knowledge: courtEl.querySelector('.court-row-knowledge') as HTMLElement,
+      cats: courtEl.querySelector('.court-row-cats') as HTMLElement,
+      footer: courtEl.querySelector('.court-row-footer') as HTMLElement,
+    };
+
+    function centerY(el: HTMLElement) { return el.offsetTop + el.offsetHeight / 2; }
+
+    // ---- 入场动画 ----
+    shuttle.classList.add('is-entering');
+    shuttle.addEventListener('animationend', () => {
+      shuttle.classList.remove('is-entering');
+      shuttle.classList.add('is-active');
+      loadGSAP();
+    }, { once: true });
+
+    async function loadGSAP() {
+      try {
+        const { gsap } = await import('gsap');
+        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        gsap.registerPlugin(ScrollTrigger);
+        buildAnimation(gsap, ScrollTrigger);
+      } catch (e) {
+        console.warn('GSAP 加载失败', e);
+      }
+    }
+
+    function buildAnimation(gsap: any, ScrollTrigger: any) {
+      if ((window as any).__shuttleST) (window as any).__shuttleST.kill();
+
+      const shadow = shuttle.querySelector('.shuttle-shadow') as HTMLElement;
+      const svgEl = shuttle.querySelector('.shuttle-svg') as HTMLElement;
+      const spotlightEl = document.getElementById('spotlight');
+      const vignetteEl = courtEl!.querySelector('.court-vignette') as HTMLElement;
+
+      // 可模糊的内容区
+      const contentSections = [rows.lessons, rows.knowledge, rows.cats, rows.footer].filter(Boolean);
+
+      // ====== 航点定义 ======
+      const waypoints = [
+        { y: centerY(rows.hero),      x: 48, type: 'fly',  el: null,           dur: 0 },
+        { y: centerY(rows.hero) + rows.hero.offsetHeight * 0.35, x: 42, type: 'fly', el: null, dur: 1.5 },
+        { y: centerY(rows.lessons),   x: 56, type: 'land', el: rows.lessons,   dur: 2 },
+        { y: centerY(rows.netLine),   x: 50, type: 'fly',  el: null,           dur: 2 },
+        { y: centerY(rows.knowledge), x: 43, type: 'land', el: rows.knowledge, dur: 2 },
+        { y: centerY(rows.cats),      x: 55, type: 'land', el: rows.cats,      dur: 2 },
+        { y: rows.footer.offsetTop + 10, x: 50, type: 'fly', el: null,         dur: 1.5 },
+      ];
+
+      // ====== 初始状态 ======
+      gsap.set(shuttle, {
+        top: waypoints[0].y,
+        left: waypoints[0].x + '%',
+        xPercent: -50,
+        scale: 1,
+        rotation: 0,
+      });
+      gsap.set(svgEl, { filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.5))' });
+
+      // 射灯初始状态
+      if (spotlightEl) {
+        gsap.set(spotlightEl, {
+          top: waypoints[0].y,
+          left: waypoints[0].x + '%',
+          xPercent: -50,
+          yPercent: -50,
+          opacity: 0.6,
+          scale: 1,
+        });
+      }
+
+      // ====== 主时间线 ======
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: courtEl,
+          start: 'top top+=60',
+          end: 'bottom bottom',
+          scrub: 1.5,
+          invalidateOnRefresh: true,
+        },
+      });
+      (window as any).__shuttleST = tl.scrollTrigger;
+
+      // ====== 逐段构建动画 ======
+      for (let i = 0; i < waypoints.length - 1; i++) {
+        const from = waypoints[i];
+        const to = waypoints[i + 1];
+        const pos = tl.duration() || 0;
+
+        const isLanding = to.type === 'land';
+        const isLeaving = from.type === 'land';
+
+        const flyScale = 1.3 + (i === 2 ? 0.15 : 0);
+        const landScale = 0.75;
+
+        // --- 球的位移 + 缩放 ---
+        tl.to(shuttle, {
+          top: to.y,
+          left: to.x + '%',
+          scale: isLanding ? landScale : flyScale,
+          rotation: isLanding ? 0 : (i % 2 === 0 ? 8 : -8),
+          duration: to.dur,
+          ease: isLanding ? 'power3.out' : 'power2.inOut',
+        }, pos);
+
+        // --- 球的光晕（着陆时球失焦）---
+        tl.to(svgEl, {
+          filter: isLanding
+            ? 'drop-shadow(0 0 2px rgba(255,255,255,0.2))'
+            : 'drop-shadow(0 0 10px rgba(255,255,255,0.7))',
+          opacity: isLanding ? 0.4 : 1,
+          duration: to.dur,
+          ease: 'power2.inOut',
+        }, pos);
+
+        // --- 球影 ---
+        tl.to(shadow, {
+          scaleX: isLanding ? 1 : 2,
+          scaleY: isLanding ? 1 : 1.5,
+          opacity: isLanding ? 0.35 : 0.1,
+          y: isLanding ? 4 : 20,
+          filter: isLanding ? 'blur(2px)' : 'blur(8px)',
+          duration: to.dur,
+          ease: 'power2.inOut',
+        }, pos);
+
+        // --- 追踪射灯 — 跟随球移动 ---
+        if (spotlightEl) {
+          tl.to(spotlightEl, {
+            top: to.y,
+            left: to.x + '%',
+            // 飞行中：射灯扩散大+亮（球在高空，光锥散开）
+            // 着陆时：射灯收拢+更亮更集中
+            scale: isLanding ? 0.7 : 1.4,
+            opacity: isLanding ? 0.9 : 0.5,
+            duration: to.dur,
+            ease: isLanding ? 'power3.out' : 'power2.inOut',
+          }, pos);
+        }
+
+        // --- 暗角随射灯呼吸 ---
+        if (vignetteEl) {
+          tl.to(vignetteEl, {
+            opacity: isLanding ? 0.6 : 1,
+            duration: to.dur,
+            ease: 'power2.inOut',
+          }, pos);
+        }
+
+        // --- 内容区景深 ---
+        contentSections.forEach(section => {
+          const isFocusTarget = isLanding && section === to.el;
+
+          if (isFocusTarget) {
+            tl.to(section, {
+              filter: 'blur(0px)',
+              opacity: 1,
+              duration: to.dur,
+              ease: 'power2.out',
+            }, pos);
+          } else if (isLanding && section !== to.el) {
+            tl.to(section, {
+              filter: 'blur(4px)',
+              opacity: 0.5,
+              duration: to.dur,
+              ease: 'power2.out',
+            }, pos);
+          } else if (!isLanding) {
+            tl.to(section, {
+              filter: 'blur(2px)',
+              opacity: 0.65,
+              duration: to.dur,
+              ease: 'power2.inOut',
+            }, pos);
+          }
+        });
+      }
+
+      // ====== 末尾：球淡出，射灯淡出，内容恢复 ======
+      const endPos = tl.duration();
+      tl.to(shuttle, {
+        opacity: 0,
+        scale: 0.5,
+        rotation: 15,
+        duration: 1,
+        ease: 'power2.in',
+      }, endPos);
+
+      if (spotlightEl) {
+        tl.to(spotlightEl, {
+          opacity: 0,
+          scale: 0.3,
+          duration: 1,
+          ease: 'power2.in',
+        }, endPos);
+      }
+
+      if (vignetteEl) {
+        tl.to(vignetteEl, {
+          opacity: 0,
+          duration: 1.5,
+          ease: 'power2.out',
+        }, endPos);
+      }
+
+      contentSections.forEach(section => {
+        tl.to(section, {
+          filter: 'blur(0px)',
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out',
+        }, endPos);
+      });
+    }
+  })();
 </script>
