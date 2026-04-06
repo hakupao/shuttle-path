@@ -13,9 +13,13 @@ node_modules/
 # editor
 .vscode/
 .idea/
+
+# claude local config
+.claude/settings.local.json
 *.swp
 *.swo
 .DS_Store
+Thumbs.db
 
 # debug
 npm-debug.log*
