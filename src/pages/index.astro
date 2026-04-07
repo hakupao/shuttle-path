@@ -273,9 +273,8 @@ const formatDate = (date: Date) =>
     pointer-events: none;
     width: 140px;
     height: 140px;
-    top: 120px;
-    left: 50%;
-    transform: translate(-50%, -50%) translateZ(0);
+    top: 0;
+    left: 0;
     border-radius: 50%;
     background: radial-gradient(
       circle at center,
@@ -314,9 +313,8 @@ const formatDate = (date: Date) =>
     opacity: 0;
     width: 32px;
     height: 48px;
-    top: 120px;
-    left: 50%;
-    transform: translateX(-50%) translateZ(0);
+    top: 0;
+    left: 0;
     will-change: transform, opacity;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -325,56 +323,31 @@ const formatDate = (date: Date) =>
     .shuttle {
       width: 40px;
       height: 60px;
-      top: 160px;
     }
   }
 
   .shuttle-svg {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
   }
 
   .shuttle-shadow {
     position: absolute;
     bottom: -10px;
     left: 50%;
-    width: 20px;
-    height: 8px;
+    width: 28px;
+    height: 12px;
     transform: translateX(-50%) translateZ(0);
-    background: rgba(0, 0, 0, 0.3);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(3px);
     will-change: transform, opacity;
-  }
-
-  /* 入场动画 */
-  @keyframes shuttle-enter {
-    0% {
-      opacity: 0;
-      transform: translateX(-50%) translateY(-120px) scale(0.4) rotate(-20deg);
-    }
-    50% {
-      opacity: 1;
-    }
-    85% {
-      transform: translateX(-50%) translateY(8px) scale(1.05) rotate(3deg);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
-    }
-  }
-
-  .shuttle.is-entering {
-    animation: shuttle-enter 0.9s var(--ease-out-expo) forwards;
   }
 
   .shuttle.is-active {
     opacity: 1;
   }
 
-  /* 内容区 will-change（景深用 opacity 替代 blur） */
+  /* 内容区 will-change */
   .court-row-lessons,
   .court-row-knowledge,
   .court-row-cats,
@@ -403,12 +376,14 @@ const formatDate = (date: Date) =>
 
   /* 滚动空间容器 */
   .scene {
-    height: 700vh;
+    height: 500vh;
     position: relative;
   }
 
-  /* 摄像机 — 提供 CSS perspective，被 ScrollTrigger pin 固定 */
+  /* 摄像机 — 提供 CSS perspective，用 sticky 固定（避免 JS pin 抖动） */
   .camera {
+    position: sticky;
+    top: 0;
     width: 100%;
     height: 100vh;
     display: flex;
@@ -445,6 +420,7 @@ const formatDate = (date: Date) =>
       height: auto;
     }
     .camera {
+      position: static;
       height: auto;
       perspective: none;
     }
@@ -755,21 +731,21 @@ const formatDate = (date: Date) =>
   }
 
   // ============================================
-  // 滚动动画 v3.1 — 3D 转播视角 + 镜头升降（优化版）
+  // 滚动动画 — 3D 转播视角 + 镜头升降
+  // CSS sticky 固定视口，GSAP ScrollTrigger 驱动动画
+  // 所有位移使用 transform（y/x），避免 Layout Reflow
   // ============================================
   (function initCameraAnimation() {
     const shuttle = document.getElementById('shuttle');
     const courtEl = document.querySelector('.court') as HTMLElement | null;
     const cameraRig = document.getElementById('camera-rig');
     const sceneEl = document.querySelector('.scene') as HTMLElement | null;
-    const cameraEl = document.getElementById('camera');
-    if (!shuttle || !courtEl || !cameraRig || !sceneEl || !cameraEl) return;
+    if (!shuttle || !courtEl || !cameraRig || !sceneEl) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const rows = {
       hero: courtEl.querySelector('.court-row-hero') as HTMLElement,
       lessons: courtEl.querySelector('.court-row-lessons') as HTMLElement,
-      netLine: courtEl.querySelector('.court-net') as HTMLElement,
       knowledge: courtEl.querySelector('.court-row-knowledge') as HTMLElement,
       cats: courtEl.querySelector('.court-row-cats') as HTMLElement,
       footer: courtEl.querySelector('.court-row-footer') as HTMLElement,
@@ -804,9 +780,6 @@ const formatDate = (date: Date) =>
     const F_ANGLE = isMobile ? 35 : 38;        // 聚焦俯角（适度，减少横向拉伸）
     const F_SCALE = isMobile ? 2.6 : 2.2;      // 聚焦缩放（更沉浸但不过度裁切）
 
-    // ---- 跳过 CSS 入场，直接用 GSAP ----
-    shuttle.classList.add('is-active');
-
     async function loadGSAP() {
       try {
         const { gsap } = await import('gsap');
@@ -835,40 +808,41 @@ const formatDate = (date: Date) =>
       type Segment = FocusSeg | TransSeg | ExitSeg;
 
       const segs: Segment[] = [
-        { type: 'focus',      section: rows.hero,      sx: 48, dur: 5 },
-        { type: 'transition', dur: 2.5 },
-        { type: 'focus',      section: rows.lessons,   sx: 56, dur: 5 },
-        { type: 'transition', dur: 2.5 },
-        { type: 'focus',      section: rows.knowledge, sx: 43, dur: 5 },
-        { type: 'transition', dur: 2.5 },
-        { type: 'focus',      section: rows.cats,      sx: 50, dur: 5 },
-        { type: 'exit',       dur: 2 },
+        { type: 'focus',      section: rows.hero,      sx: 48, dur: 3.5 },
+        { type: 'transition', dur: 2 },
+        { type: 'focus',      section: rows.lessons,   sx: 56, dur: 3.5 },
+        { type: 'transition', dur: 2 },
+        { type: 'focus',      section: rows.knowledge, sx: 43, dur: 3.5 },
+        { type: 'transition', dur: 2 },
+        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5 },
+        { type: 'exit',       dur: 1.5 },
       ];
 
       // ====== 初始状态 ======
       const heroY = centerY(rows.hero);
+      const courtW = courtEl!.offsetWidth;
+      function courtX(pct: number) { return courtW * pct / 100; }
 
-      gsap.set(shuttle, { top: heroY, left: '48%', xPercent: -50, scale: 1, rotation: 0, force3D: true });
+      gsap.set(shuttle, { y: heroY, x: courtX(48), xPercent: -50, scale: 1, rotation: 0, force3D: true });
       gsap.set(svgEl, { opacity: 1 });
       gsap.set(shadow, { scaleX: 1, scaleY: 1, opacity: 0.2 });
-      if (spotlightEl) gsap.set(spotlightEl, { top: heroY, left: '48%', xPercent: -50, yPercent: -50, opacity: 0.6, scale: 1, force3D: true });
+      if (spotlightEl) gsap.set(spotlightEl, { y: heroY, x: courtX(48), xPercent: -50, yPercent: -50, opacity: 0.6, scale: 1, force3D: true });
       gsap.set(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, force3D: true });
+      shuttle.classList.add('is-active');
 
-      // ====== 主时间线（scrub 增大，减少抖动）======
+      // ====== 主时间线 ======
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sceneEl,
-          pin: cameraEl,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 2,
-          pinType: 'transform',
+          scrub: 2.5,
           invalidateOnRefresh: true,
         },
       });
       (window as any).__shuttleST = tl.scrollTrigger;
 
-      // ====== 辅助：聚焦段（移除 filter 动画，保留 GPU 友好属性）======
+      // ====== 辅助：聚焦段 ======
       function addFocus(seg: FocusSeg, pos: number) {
         const { section, sx, dur } = seg;
         const ty = centerY(section);
@@ -878,16 +852,16 @@ const formatDate = (date: Date) =>
         tl.to(cameraRig, { rotateX: F_ANGLE, scale: F_SCALE, y: oy, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
 
         // 球：降落
-        tl.to(shuttle, { top: ty, left: sx + '%', scale: 0.75, rotation: 0, duration: dur * 0.6, ease: 'power3.out', force3D: true }, pos);
+        tl.to(shuttle, { y: ty, x: courtX(sx), scale: 0.75, rotation: 0, duration: dur * 0.6, ease: 'power3.out', force3D: true }, pos);
 
-        // 球光晕：只用 opacity（不动 filter）
+        // 球光晕
         tl.to(svgEl, { opacity: 0.3, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
-        // 球影：只用 transform + opacity
+        // 球影
         tl.to(shadow, { scaleX: 1, scaleY: 1, opacity: 0.35, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
         // 聚光灯
-        if (spotlightEl) tl.to(spotlightEl, { top: ty, left: sx + '%', scale: 0.6, opacity: 0.95, duration: dur * 0.6, ease: 'power3.out', force3D: true }, pos);
+        if (spotlightEl) tl.to(spotlightEl, { y: ty, x: courtX(sx), scale: 0.6, opacity: 0.95, duration: dur * 0.6, ease: 'power3.out', force3D: true }, pos);
 
         // 暗角
         if (vignetteEl) tl.to(vignetteEl, { opacity: 0.5, duration: dur * 0.4, ease: 'power2.out' }, pos);
@@ -907,13 +881,13 @@ const formatDate = (date: Date) =>
 
         tl.to(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
 
-        tl.to(shuttle, { top: midY, left: '50%', scale: 1.3, rotation: rot, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
+        tl.to(shuttle, { y: midY, x: courtX(50), scale: 1.3, rotation: rot, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
 
         tl.to(svgEl, { opacity: 1, duration: dur * 0.4, ease: 'power2.out' }, pos);
 
         tl.to(shadow, { scaleX: 2, scaleY: 1.5, opacity: 0.08, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
-        if (spotlightEl) tl.to(spotlightEl, { top: midY, left: '50%', scale: 1.6, opacity: 0.4, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
+        if (spotlightEl) tl.to(spotlightEl, { y: midY, x: courtX(50), scale: 1.6, opacity: 0.4, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
 
         if (vignetteEl) tl.to(vignetteEl, { opacity: 1, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
