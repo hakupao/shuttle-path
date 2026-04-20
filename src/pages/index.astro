@@ -218,22 +218,13 @@ const formatDate = (date: Date) =>
 
 <style>
   /* ============================================
-     场地灯光效果 — 三层亮度
-     光照衰减遵循平方反比定律 I = 1/r²
-     近处亮度下降极快，远处逐渐趋平
-
-     Zone 1: 场外（最暗）— 灯光溢出后自然衰减到暗
-     Zone 2: 场内（中等）— 左3右3顶灯照射
-     Zone 3: 追踪射灯（最亮）— 跟随羽毛球
+     场地灯光效果
+     - .court box-shadow：场外溢出（见 .court 规则）
+     - .court-vignette：场内顶灯（左3右3）+ 四角暗角
+     - .spotlight：追踪射灯（跟随羽毛球）
      ============================================ */
 
-  /* --- Zone 1: 灯光溢出到场外 ---
-     不用硬切断！用 box-shadow 模拟光线从场内向外溢出
-     多层 shadow 模拟 1/r² 衰减：近=亮，远=极暗 */
-
-  /* --- Zone 2: 场内顶灯（左3右3共6盏） ---
-     每盏灯的 gradient stops 按 1/r² 分布：
-     0%=满亮, 15%=快速衰减, 35%=大部分光已散, 60%=微光, 100%=无光 */
+  /* 场内顶灯 + 暗角 */
   .court-vignette {
     position: absolute;
     inset: 0;
@@ -266,7 +257,7 @@ const formatDate = (date: Date) =>
         rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.40) 100%);
   }
 
-  /* --- Zone 3: 追踪射灯 — 1/r² 衰减的聚光 --- */
+  /* 追踪射灯 — 1/r² 衰减的聚光 */
   .spotlight {
     position: absolute;
     z-index: 0;
@@ -345,14 +336,6 @@ const formatDate = (date: Date) =>
 
   .shuttle.is-active {
     opacity: 1;
-  }
-
-  /* 内容区 will-change */
-  .court-row-lessons,
-  .court-row-knowledge,
-  .court-row-cats,
-  .court-row-footer {
-    will-change: opacity;
   }
 
   /* 无障碍：减少动画 */
@@ -810,14 +793,14 @@ const formatDate = (date: Date) =>
         const { gsap } = await import('gsap');
         const { ScrollTrigger } = await import('gsap/ScrollTrigger');
         gsap.registerPlugin(ScrollTrigger);
-        buildAnimation(gsap, ScrollTrigger);
+        buildAnimation(gsap);
       } catch (e) {
         console.warn('GSAP 加载失败', e);
       }
     }
     loadGSAP();
 
-    function buildAnimation(gsap: any, ScrollTrigger: any) {
+    function buildAnimation(gsap: any) {
       if ((window as any).__shuttleST) (window as any).__shuttleST.kill();
 
       const shadow = shuttle.querySelector('.shuttle-shadow') as HTMLElement;
