@@ -64,7 +64,8 @@ const formatDate = (date: Date) =>
           <path d="M6,4 Q12,0 18,1 Q24,0 30,4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" />
           {/* 羽毛根部绑线 */}
           <ellipse cx="18" cy="28" rx="6" ry="2" stroke="white" stroke-width="1.2" fill="none" />
-          {/* 球托 */}
+          {/* 球托：暗描边 + 白填充，避免撞场地白线 */}
+          <circle cx="18" cy="38" r="6" stroke="rgba(0,0,0,0.55)" stroke-width="1" fill="none" />
           <circle cx="18" cy="38" r="5" stroke="white" stroke-width="1.5" fill="white" fill-opacity="0.3" />
         </svg>
       </div>
