@@ -775,10 +775,10 @@ const formatDate = (date: Date) =>
 
     // ---- 响应式参数 ----
     const isMobile = window.innerWidth < 768;
-    const P_ANGLE = isMobile ? 18 : 22;        // 全景俯角（低 = 更多纵深）
-    const P_SCALE = isMobile ? 0.6 : 0.7;      // 全景缩放（2x：看清全体）
-    const F_ANGLE = isMobile ? 35 : 38;        // 聚焦俯角（适度，减少横向拉伸）
-    const F_SCALE = isMobile ? 2.6 : 2.2;      // 聚焦缩放（更沉浸但不过度裁切）
+    const P_ANGLE = isMobile ? 22 : 25;        // 全景俯角
+    const P_SCALE = isMobile ? 0.6 : 0.7;      // 全景缩放
+    const F_ANGLE = isMobile ? 28 : 30;        // 聚焦俯角（更正面、文字可读）
+    const F_SCALE = isMobile ? 2.0 : 1.7;      // 聚焦缩放（收窄 Δ 减少弹簧感）
 
     async function loadGSAP() {
       try {
@@ -809,11 +809,11 @@ const formatDate = (date: Date) =>
 
       const segs: Segment[] = [
         { type: 'focus',      section: rows.hero,      sx: 48, dur: 3.5 },
-        { type: 'transition', dur: 2 },
+        { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.lessons,   sx: 56, dur: 3.5 },
-        { type: 'transition', dur: 2 },
+        { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.knowledge, sx: 43, dur: 3.5 },
-        { type: 'transition', dur: 2 },
+        { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5 },
         { type: 'exit',       dur: 1.5 },
       ];
@@ -836,7 +836,7 @@ const formatDate = (date: Date) =>
           trigger: sceneEl,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 2.5,
+          scrub: 1.3,
           invalidateOnRefresh: true,
         },
       });
@@ -879,7 +879,7 @@ const formatDate = (date: Date) =>
         const midY = (prevY + nextY) / 2;
         const rot = idx % 2 === 0 ? 8 : -8;
 
-        tl.to(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
+        tl.to(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, duration: dur, ease: 'power2.inOut', force3D: true }, pos);
 
         tl.to(shuttle, { y: midY, x: courtX(50), scale: 1.3, rotation: rot, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
 
@@ -892,7 +892,7 @@ const formatDate = (date: Date) =>
         if (vignetteEl) tl.to(vignetteEl, { opacity: 1, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
         contentSections.forEach(s => {
-          tl.to(s, { opacity: 0.4, duration: dur * 0.5, ease: 'power2.inOut' }, pos);
+          tl.to(s, { opacity: 0.12, duration: dur * 0.5, ease: 'power2.inOut' }, pos);
         });
       }
 
