@@ -928,22 +928,36 @@ const formatDate = (date: Date) =>
         });
       }
 
-      // ====== 辅助：过渡段 ======
-      function addTransition(dur: number, pos: number, idx: number, prevSec: HTMLElement | null, nextSec: HTMLElement) {
+      // ====== 辅助：过渡段（抛物线飞行） ======
+      function addTransition(
+        dur: number, pos: number, transIdx: number,
+        prevSec: HTMLElement | null, nextSec: HTMLElement,
+        prevSx: number, nextSx: number
+      ) {
         const prevY = prevSec ? centerY(prevSec) : heroY;
         const nextY = centerY(nextSec);
-        const midY = (prevY + nextY) / 2;
-        const rot = idx % 2 === 0 ? 8 : -8;
+        const peakY = Math.min(prevY, nextY) - 120;   // 峰值抬高 120px
+        const midSx = (prevSx + nextSx) / 2;
+        const swing = 10;
+        const midX = transIdx % 2 === 0 ? midSx - swing : midSx + swing;
+        const peakRot = transIdx % 2 === 0 ? -10 : 10;
 
         tl.to(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, duration: dur, ease: 'power2.inOut', force3D: true }, pos);
 
-        tl.to(shuttle, { y: midY, x: courtX(50), scale: 1.3, rotation: rot, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
+        // 上升：到达飞行峰值
+        tl.to(shuttle, { y: peakY, x: courtX(midX), scale: 1.3, rotation: peakRot, duration: dur * 0.4, ease: 'power1.out', force3D: true }, pos);
+        // 下降：落向下一站
+        tl.to(shuttle, { y: nextY, x: courtX(nextSx), rotation: 0, duration: dur * 0.4, ease: 'power1.in', force3D: true }, pos + dur * 0.4);
 
         tl.to(svgEl, { opacity: 1, duration: dur * 0.4, ease: 'power2.out' }, pos);
 
         tl.to(shadow, { scaleX: 2, scaleY: 1.5, opacity: 0.08, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
-        if (spotlightEl) tl.to(spotlightEl, { y: midY, x: courtX(50), scale: 1.6, opacity: 0.4, duration: dur * 0.8, ease: 'power2.inOut', force3D: true }, pos);
+        // 聚光灯跟随球：上升到峰值，再下降到下一站
+        if (spotlightEl) {
+          tl.to(spotlightEl, { y: peakY, x: courtX(midX), scale: 1.6, opacity: 0.4, duration: dur * 0.4, ease: 'power1.out', force3D: true }, pos);
+          tl.to(spotlightEl, { y: nextY, x: courtX(nextSx), duration: dur * 0.4, ease: 'power1.in', force3D: true }, pos + dur * 0.4);
+        }
 
         if (vignetteEl) tl.to(vignetteEl, { opacity: 1, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
@@ -954,6 +968,8 @@ const formatDate = (date: Date) =>
 
       // ====== 构建时间线 ======
       let prevSection: HTMLElement | null = null;
+      let prevSx = 48;
+      let transIdx = 0;
 
       for (let i = 0; i < segs.length; i++) {
         const seg = segs[i];
@@ -962,12 +978,16 @@ const formatDate = (date: Date) =>
         if (seg.type === 'focus') {
           addFocus(seg, pos);
           prevSection = seg.section;
+          prevSx = seg.sx;
 
         } else if (seg.type === 'transition') {
           const nextFocus = segs[i + 1];
           const nextSec = (nextFocus && nextFocus.type === 'focus')
             ? (nextFocus as FocusSeg).section : rows.footer;
-          addTransition(seg.dur, pos, i, prevSection, nextSec);
+          const nextSx = (nextFocus && nextFocus.type === 'focus')
+            ? (nextFocus as FocusSeg).sx : 30;
+          addTransition(seg.dur, pos, transIdx, prevSection, nextSec, prevSx, nextSx);
+          transIdx++;
 
         } else if (seg.type === 'exit') {
           const dur = seg.dur;
