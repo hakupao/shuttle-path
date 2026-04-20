@@ -161,7 +161,7 @@ const formatDate = (date: Date) =>
       <div class="court-row court-row-cats">
         <a href={`/knowledge/?category=strokes`} class="court-half court-half-left court-cat group">
           <div class="court-pad-left">
-            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
+            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text">
               {knowledgeCats[0].label}
             </h3>
             <p class="text-[10px] text-white/35 uppercase tracking-wider mb-2">{knowledgeCats[0].en}</p>
@@ -766,7 +766,7 @@ const formatDate = (date: Date) =>
       }
       return anchor
         ? top + anchor.offsetHeight / 2
-        : top + section.offsetHeight * 0.20;
+        : top + section.offsetHeight * 0.50;
     }
 
     function getSectionOffsetY(section: HTMLElement) {
