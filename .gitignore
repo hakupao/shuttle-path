@@ -16,6 +16,7 @@ node_modules/
 
 # claude local config
 .claude/settings.local.json
+.omc/
 *.swp
 *.swo
 .DS_Store
