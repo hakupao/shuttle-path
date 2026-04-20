@@ -786,7 +786,7 @@ const formatDate = (date: Date) =>
     const P_ANGLE = isMobile ? 22 : 25;        // 全景俯角
     const P_SCALE = isMobile ? 0.6 : 0.7;      // 全景缩放
     const F_ANGLE = isMobile ? 28 : 30;        // 聚焦俯角（更正面、文字可读）
-    const F_SCALE = isMobile ? 2.0 : 1.7;      // 聚焦缩放（收窄 Δ 减少弹簧感）
+    const F_SCALE = isMobile ? 1.4 : 1.7;      // 聚焦缩放（移动端收紧避免文字横向溢出）
 
     async function loadGSAP() {
       try {
@@ -822,11 +822,11 @@ const formatDate = (date: Date) =>
         { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.knowledge, sx: 43, dur: 3.5 },
         { type: 'transition', dur: 3 },
-        // Cats / Footer 的 anchor 元素本身比 Hero/Lessons/Knowledge 大很多
-        // 用更小的 scale 让视觉占比和前面几段接近
-        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5, scale: 1.35 },
+        // Cats / Footer 的 anchor（court-pad-left）是半宽内容块，scale 太大会偏离视口中心
+        // 桌面视口宽裕用 1.35；移动端用 1.1 让两半内容都能放得下
+        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5, scale: isMobile ? 1.1 : 1.35 },
         { type: 'transition', dur: 3 },
-        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5, scale: 1.35 },
+        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5, scale: isMobile ? 1.1 : 1.35 },
         { type: 'exit',       dur: 1.5 },
       ];
 
