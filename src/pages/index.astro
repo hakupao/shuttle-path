@@ -776,15 +776,14 @@ const formatDate = (date: Date) =>
     }
 
     // 按 section 在 rig 中的相对位置补偿透视缩放
-    // rotateX 让顶部更远（视觉缩小）、底部更近（视觉放大）
-    // 顶部（rel→0）需要多放大，底部（rel→1）需要少放大
+    // rotateX 让顶部更远（视觉缩小）→ 放大补偿；底部已经偏大 → 不再下调（保持 F_SCALE 兜底）
     function getFocusScale(section: HTMLElement) {
       const rigH = cameraRig!.offsetHeight;
       if (!rigH) return F_SCALE;
       const focusY = getSectionFocusPoint(section);
       const rel = focusY / rigH;
       const alpha = 0.22; // 补偿幅度 — 越大顶部越放大
-      return F_SCALE * (1 + (0.5 - rel) * alpha);
+      return F_SCALE * Math.max(1, 1 + (0.5 - rel) * alpha);
     }
 
     // ---- 响应式参数 ----
