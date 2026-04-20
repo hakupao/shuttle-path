@@ -133,7 +133,7 @@ const formatDate = (date: Date) =>
       {/* ======================================================
           球网 NET
           ====================================================== */}
-      <div class="court-net"></div>
+      <div class="court-net"><span class="court-net-label">NET</span></div>
 
       {/* ======================================================
           下半场
@@ -209,7 +209,6 @@ const formatDate = (date: Date) =>
     <div class="court-dims">
       <span class="court-dim-w">6.10m</span>
       <span class="court-dim-h">13.40m</span>
-      <span class="court-dim-net">NET</span>
     </div>
   </div>
       </div>
@@ -456,14 +455,10 @@ const formatDate = (date: Date) =>
     position: relative;
     /* overflow: hidden 已移除 — 与 preserve-3d 冲突 */
     transform-style: preserve-3d;
-    /* 灯光溢出 — 多层 box-shadow 模拟 1/r² 衰减
-       近处亮（场地绿光溢出），远处渐暗到场外黑暗 */
+    /* 灯光溢出 — 两层足够，避免 3D 放大时阴影膨胀失控 */
     box-shadow:
-      0 0 30px 5px rgba(27, 138, 78, 0.30),
-      0 0 60px 15px rgba(27, 138, 78, 0.18),
-      0 0 100px 30px rgba(27, 138, 78, 0.10),
-      0 0 160px 60px rgba(27, 138, 78, 0.05),
-      0 0 250px 100px rgba(27, 138, 78, 0.02);
+      0 0 40px 8px rgba(27, 138, 78, 0.25),
+      0 0 90px 24px rgba(27, 138, 78, 0.10);
   }
 
   /* 噪点纹理 */
@@ -676,6 +671,18 @@ const formatDate = (date: Date) =>
     z-index: 3;
   }
 
+  .court-net-label {
+    position: absolute;
+    right: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+
   /* ============================================
      球场尺寸标注（场外文字）
      ============================================ */
@@ -704,33 +711,9 @@ const formatDate = (date: Date) =>
     font-family: var(--font-mono);
     letter-spacing: 0.05em;
   }
-  .court-dim-net {
-    position: absolute;
-    right: -24px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 9px;
-    color: rgba(255, 255, 255, 0.3);
-    font-family: var(--font-mono);
-    letter-spacing: 0.1em;
-  }
 </style>
 
 <script>
-  // 将 NET 标注对齐到球网实际位置
-  const net = document.querySelector('.court-net');
-  const label = document.querySelector('.court-dim-net');
-  if (net && label instanceof HTMLElement) {
-    const court = document.querySelector('.court');
-    if (court) {
-      const courtRect = court.getBoundingClientRect();
-      const netRect = net.getBoundingClientRect();
-      const topOffset = netRect.top - courtRect.top + netRect.height / 2;
-      label.style.top = `${topOffset}px`;
-      label.style.transform = 'translateY(-50%)';
-    }
-  }
-
   // ============================================
   // 滚动动画 — 3D 转播视角 + 镜头升降
   // CSS sticky 固定视口，GSAP ScrollTrigger 驱动动画
