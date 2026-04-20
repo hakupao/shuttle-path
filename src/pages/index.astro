@@ -188,7 +188,7 @@ const formatDate = (date: Date) =>
       {/* --- 底部其他（后发球线区域） --- */}
       <div class="court-row court-row-footer">
         <a href={`/knowledge/?category=sports-science`} class="court-half court-half-left court-cat group">
-          <div class="court-pad-left-sm">
+          <div class="court-pad-left-sm" data-focus-anchor>
             <h3 class="text-sm text-white font-bold group-hover:text-white/80 transition-colors holo-text">{knowledgeCats[2].label}</h3>
             <p class="text-[10px] text-white/35 mt-0.5">{knowledgeCats[2].en}</p>
           </div>
@@ -856,6 +856,8 @@ const formatDate = (date: Date) =>
         { type: 'focus',      section: rows.knowledge, sx: 43, dur: 3.5 },
         { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5 },
+        { type: 'transition', dur: 3 },
+        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5 },
         { type: 'exit',       dur: 1.5 },
       ];
 
