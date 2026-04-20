@@ -916,7 +916,7 @@ const formatDate = (date: Date) =>
         } else if (seg.type === 'exit') {
           const dur = seg.dur;
 
-          tl.to(cameraRig, { rotateX: P_ANGLE - 8, scale: P_SCALE * 0.6, y: 0, duration: dur, ease: 'power2.in', force3D: true }, pos);
+          tl.to(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, duration: dur, ease: 'power2.inOut', force3D: true }, pos);
 
           tl.to(shuttle, { opacity: 0, scale: 0.4, rotation: 20, duration: dur * 0.7, ease: 'power2.in' }, pos);
 
