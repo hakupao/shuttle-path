@@ -775,6 +775,34 @@ const formatDate = (date: Date) =>
       return -(focusPoint - rigH / 2);
     }
 
+    // 把 3D 变换后 anchor 的屏幕位置精确对齐到摄像机视口中心
+    // 2D 公式（getSectionOffsetY）得到的 ty 忽略了 rotateX 的透视投影，
+    // 导致顶部/底部 section 的 anchor 视觉上偏离视口中心。
+    // 这里通过迭代试探：应用临时 transform → 测量 anchor 屏幕中心 → 调整 ty。
+    function calibrateFocusTy(section: HTMLElement, fScale: number, fAngle: number, gsap: any): number {
+      const anchor = (section.querySelector('[data-focus-anchor]') as HTMLElement | null) || section;
+      const cameraEl = document.getElementById('camera');
+      if (!cameraEl) return getSectionOffsetY(section);
+      let ty = getSectionOffsetY(section);
+      for (let i = 0; i < 6; i++) {
+        gsap.set(cameraRig, { rotateX: fAngle, scale: fScale, y: ty, force3D: true });
+        const camRect = cameraEl.getBoundingClientRect();
+        const target = camRect.top + camRect.height / 2;
+        const rect = anchor.getBoundingClientRect();
+        const actual = rect.top + rect.height / 2;
+        const delta = target - actual;
+        if (Math.abs(delta) < 1) break;
+        // 探测每单位 ty 在屏幕上造成的 Y 位移
+        gsap.set(cameraRig, { rotateX: fAngle, scale: fScale, y: ty + 20, force3D: true });
+        const r2 = anchor.getBoundingClientRect();
+        const a2 = r2.top + r2.height / 2;
+        const dydty = (a2 - actual) / 20;
+        if (Math.abs(dydty) < 0.01) break;
+        ty += delta / dydty;
+      }
+      return ty;
+    }
+
     // 按 section 在 rig 中的相对位置补偿透视缩放
     // rotateX 让顶部更远（视觉缩小）→ 放大补偿；底部已经偏大 → 不再下调（保持 F_SCALE 兜底）
     function getFocusScale(section: HTMLElement) {
@@ -840,6 +868,16 @@ const formatDate = (date: Date) =>
       gsap.set(svgEl, { opacity: 1 });
       gsap.set(shadow, { scaleX: 1, scaleY: 1, opacity: 0.2 });
       if (spotlightEl) gsap.set(spotlightEl, { y: heroY, x: courtX(48), xPercent: -50, yPercent: -50, opacity: 0.6, scale: 1, force3D: true });
+
+      // 预计算每个聚焦段的校准后 ty（在变换后 anchor 视觉居中视口）
+      const calibratedTy = new Map<HTMLElement, number>();
+      for (const seg of segs) {
+        if (seg.type === 'focus') {
+          const fScale = getFocusScale(seg.section);
+          calibratedTy.set(seg.section, calibrateFocusTy(seg.section, fScale, F_ANGLE, gsap));
+        }
+      }
+
       gsap.set(cameraRig, { rotateX: P_ANGLE, scale: P_SCALE, y: 0, force3D: true });
       shuttle.classList.add('is-active');
 
@@ -859,7 +897,7 @@ const formatDate = (date: Date) =>
       function addFocus(seg: FocusSeg, pos: number) {
         const { section, sx, dur } = seg;
         const ty = centerY(section);
-        const oy = getSectionOffsetY(section);
+        const oy = calibratedTy.get(section) ?? getSectionOffsetY(section);
         const fScale = getFocusScale(section);
 
         // 摄像机云台
