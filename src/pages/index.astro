@@ -84,7 +84,7 @@ const formatDate = (date: Date) =>
         {/* 中线渐隐：从底部前发球线处纯白 → 向上渐隐消失 */}
         <div class="hero-center-line"></div>
         <div class="court-pad relative z-[1]">
-          <h1 class="font-display text-2xl md:text-4xl text-white leading-tight mb-3 holo-text">
+          <h1 class="font-display text-2xl md:text-4xl text-white leading-tight mb-3 holo-text" data-focus-anchor>
             Shuttle Path
           </h1>
           <p class="text-sm md:text-base text-white/80 leading-relaxed mb-1">
@@ -110,7 +110,7 @@ const formatDate = (date: Date) =>
       {/* --- 涨球记录（原教学日记）— 全宽 --- */}
       <a href="/lessons/" class="court-row court-row-lessons group">
         <div class="court-pad">
-          <h2 class="text-lg md:text-xl text-white font-bold mb-2 group-hover:text-white/80 transition-colors holo-text">
+          <h2 class="text-lg md:text-xl text-white font-bold mb-2 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
             涨球记录
           </h2>
           <p class="text-xs text-white/40 mb-3">原教学日记</p>
@@ -141,7 +141,7 @@ const formatDate = (date: Date) =>
       {/* --- 知识库 — 全宽 --- */}
       <a href="/knowledge/" class="court-row court-row-knowledge group">
         <div class="court-pad">
-          <h2 class="text-lg md:text-xl text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text">
+          <h2 class="text-lg md:text-xl text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
             知识库
           </h2>
           <p class="text-xs text-white/40 mb-3">Knowledge Base</p>
@@ -161,7 +161,7 @@ const formatDate = (date: Date) =>
       <div class="court-row court-row-cats">
         <a href={`/knowledge/?category=strokes`} class="court-half court-half-left court-cat group">
           <div class="court-pad-left">
-            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text">
+            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
               {knowledgeCats[0].label}
             </h3>
             <p class="text-[10px] text-white/35 uppercase tracking-wider mb-2">{knowledgeCats[0].en}</p>
@@ -753,24 +753,38 @@ const formatDate = (date: Date) =>
 
     function centerY(el: HTMLElement) { return el.offsetTop + el.offsetHeight / 2; }
 
-    // 计算 section 中心相对于 camera-rig 的偏移
-    // 需要遍历 offsetParent 链来获得相对于 rig 的精确位置
-    // 获取 section 的"视觉重心"在 camera-rig 中的位置
-    // 偏上 35%（内容/标题通常在 section 上部）
+    // section 的视觉聚焦点在 camera-rig 中的 Y 坐标
+    // 优先读取 [data-focus-anchor] 元素中心；fallback 用 section 顶部 20%
     function getSectionFocusPoint(section: HTMLElement) {
+      const anchor = section.querySelector('[data-focus-anchor]') as HTMLElement | null;
+      const target = anchor || section;
       let top = 0;
-      let el: HTMLElement | null = section;
+      let el: HTMLElement | null = target;
       while (el && el !== cameraRig) {
         top += el.offsetTop;
         el = el.offsetParent as HTMLElement | null;
       }
-      return top + section.offsetHeight * 0.35;
+      return anchor
+        ? top + anchor.offsetHeight / 2
+        : top + section.offsetHeight * 0.20;
     }
 
     function getSectionOffsetY(section: HTMLElement) {
       const rigH = cameraRig!.offsetHeight;
       const focusPoint = getSectionFocusPoint(section);
       return -(focusPoint - rigH / 2);
+    }
+
+    // 按 section 在 rig 中的相对位置补偿透视缩放
+    // rotateX 让顶部更远（视觉缩小）、底部更近（视觉放大）
+    // 顶部（rel→0）需要多放大，底部（rel→1）需要少放大
+    function getFocusScale(section: HTMLElement) {
+      const rigH = cameraRig!.offsetHeight;
+      if (!rigH) return F_SCALE;
+      const focusY = getSectionFocusPoint(section);
+      const rel = focusY / rigH;
+      const alpha = 0.22; // 补偿幅度 — 越大顶部越放大
+      return F_SCALE * (1 + (0.5 - rel) * alpha);
     }
 
     // ---- 响应式参数 ----
@@ -847,9 +861,10 @@ const formatDate = (date: Date) =>
         const { section, sx, dur } = seg;
         const ty = centerY(section);
         const oy = getSectionOffsetY(section);
+        const fScale = getFocusScale(section);
 
         // 摄像机云台
-        tl.to(cameraRig, { rotateX: F_ANGLE, scale: F_SCALE, y: oy, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
+        tl.to(cameraRig, { rotateX: F_ANGLE, scale: fScale, y: oy, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
 
         // 球：降落
         tl.to(shuttle, { y: ty, x: courtX(sx), scale: 0.75, rotation: 0, duration: dur * 0.6, ease: 'power3.out', force3D: true }, pos);
