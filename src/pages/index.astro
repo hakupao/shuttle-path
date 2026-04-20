@@ -843,7 +843,7 @@ const formatDate = (date: Date) =>
       const contentSections = [rows.hero, rows.lessons, rows.knowledge, rows.cats, rows.footer].filter(Boolean);
 
       // ====== 段落定义 ======
-      type FocusSeg = { type: 'focus'; section: HTMLElement; sx: number; dur: number };
+      type FocusSeg = { type: 'focus'; section: HTMLElement; sx: number; dur: number; scale?: number };
       type TransSeg = { type: 'transition'; dur: number };
       type ExitSeg  = { type: 'exit'; dur: number };
       type Segment = FocusSeg | TransSeg | ExitSeg;
@@ -855,9 +855,11 @@ const formatDate = (date: Date) =>
         { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.knowledge, sx: 43, dur: 3.5 },
         { type: 'transition', dur: 3 },
-        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5 },
+        // Cats / Footer 的 anchor 元素本身比 Hero/Lessons/Knowledge 大很多
+        // 用更小的 scale 让视觉占比和前面几段接近
+        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5, scale: 1.35 },
         { type: 'transition', dur: 3 },
-        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5 },
+        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5, scale: 1.35 },
         { type: 'exit',       dur: 1.5 },
       ];
 
@@ -875,7 +877,7 @@ const formatDate = (date: Date) =>
       const calibratedTy = new Map<HTMLElement, number>();
       for (const seg of segs) {
         if (seg.type === 'focus') {
-          const fScale = getFocusScale(seg.section);
+          const fScale = seg.scale ?? getFocusScale(seg.section);
           calibratedTy.set(seg.section, calibrateFocusTy(seg.section, fScale, F_ANGLE, gsap));
         }
       }
@@ -900,7 +902,7 @@ const formatDate = (date: Date) =>
         const { section, sx, dur } = seg;
         const ty = centerY(section);
         const oy = calibratedTy.get(section) ?? getSectionOffsetY(section);
-        const fScale = getFocusScale(section);
+        const fScale = seg.scale ?? getFocusScale(section);
 
         // 摄像机云台
         tl.to(cameraRig, { rotateX: F_ANGLE, scale: fScale, y: oy, duration: dur, ease: 'power3.inOut', force3D: true }, pos);
