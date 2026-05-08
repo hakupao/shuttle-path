@@ -21,14 +21,15 @@ const links = [
   <nav class="max-w-6xl mx-auto px-(--spacing-page) flex items-center justify-between h-16">
     <!-- Brand -->
     <a href="/" class="flex items-center gap-2.5 group">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" class:list={[
-        "transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12",
-        isHome ? "text-white" : "text-court",
-      ]}>
-        <circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M12 13 L12 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M7 19 L17 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <img
+        src={isHome ? "/images/icons/shuttlecock-white.png" : "/images/icons/shuttlecock.png"}
+        alt=""
+        width="28"
+        height="28"
+        decoding="async"
+        class="size-7 object-contain transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12"
+        aria-hidden="true"
+      />
       <span class:list={["font-display text-xl", isHome ? "text-white" : "text-ink"]}>
         Shuttle Path
       </span>

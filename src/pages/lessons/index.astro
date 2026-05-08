@@ -68,15 +68,16 @@ const formatDate = (date: Date) =>
       </div>
     ) : (
       <div class="text-center py-20 fade-in-up">
-        {/* 空状态占位 — 等手绘插画交付后替换 */}
-        <div class="w-20 h-20 rounded-full bg-paper-dark flex items-center justify-center mx-auto mb-5">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-ink-muted">
-            <rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
-            <line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <line x1="8" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <line x1="8" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <img
+          src="/images/illustrations/empty-lessons.png"
+          alt=""
+          width="128"
+          height="128"
+          loading="lazy"
+          decoding="async"
+          class="w-28 h-28 object-contain mx-auto mb-5"
+          aria-hidden="true"
+        />
         <p class="text-ink-muted font-medium mb-1">教学日记即将开始</p>
         <p class="text-sm text-ink-muted/60">第一节课正在筹备中...</p>
       </div>

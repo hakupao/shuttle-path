@@ -4,6 +4,7 @@ interface Props {
 }
 const { isHome = false } = Astro.props;
 const year = new Date().getFullYear();
+const featherTone = isHome ? '' : '-dark';
 ---
 
 <footer class:list={[
@@ -11,12 +12,33 @@ const year = new Date().getFullYear();
   isHome ? "bg-court-surround" : "bg-paper-dark/50",
 ]}>
   <!-- 装饰碎片 -->
-  <svg class:list={["absolute top-6 right-[10%] rotate-12", isHome ? "opacity-[0.08]" : "opacity-[0.06]"]} width="32" height="32" viewBox="0 0 32 32" fill="none">
-    <path d="M16 4 Q20 12 28 16 Q20 18 16 28 Q14 18 4 16 Q14 12 16 4Z" stroke={isHome ? "white" : "#3f3a36"} stroke-width="1.2" stroke-linecap="round"/>
-  </svg>
-  <svg class:list={["absolute bottom-10 left-[8%] -rotate-[20deg]", isHome ? "opacity-[0.06]" : "opacity-[0.05]"]} width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2 Q15 8 22 12 Q15 14 12 22 Q10 14 2 12 Q10 8 12 2Z" stroke={isHome ? "white" : "#3f3a36"} stroke-width="1" stroke-linecap="round"/>
-  </svg>
+  <img
+    src={`/images/decorations/feather-1${featherTone}.png`}
+    alt=""
+    width="32"
+    height="32"
+    decoding="async"
+    aria-hidden="true"
+    class:list={["absolute top-6 right-[10%] size-8 rotate-12 object-contain", isHome ? "opacity-[0.10]" : "opacity-[0.08]"]}
+  />
+  <img
+    src={`/images/decorations/feather-2${featherTone}.png`}
+    alt=""
+    width="24"
+    height="24"
+    decoding="async"
+    aria-hidden="true"
+    class:list={["absolute bottom-10 left-[8%] size-6 -rotate-[20deg] object-contain", isHome ? "opacity-[0.08]" : "opacity-[0.07]"]}
+  />
+  <img
+    src={`/images/decorations/feather-3${featherTone}.png`}
+    alt=""
+    width="28"
+    height="28"
+    decoding="async"
+    aria-hidden="true"
+    class:list={["absolute bottom-6 right-[22%] size-7 rotate-[28deg] object-contain", isHome ? "opacity-[0.06]" : "opacity-[0.05]"]}
+  />
 
   <div class:list={[
     "mx-auto px-(--spacing-page) relative",
