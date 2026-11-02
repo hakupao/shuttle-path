@@ -49,10 +49,21 @@ const formatDate = (date: Date) =>
       {/* 场地灯光 */}
       <div class="court-vignette" aria-hidden="true"></div>
       <div id="spotlight" class="spotlight" aria-hidden="true"></div>
+      <div class="court-tactical-layer" aria-hidden="true">
+        <img src="/images/illustrations/hero-shuttlecock.png" alt="" class="court-mark court-mark-hero" />
+        <img src="/images/icons/racket-white.png" alt="" class="court-mark court-mark-strokes" />
+        <img src="/images/icons/footstep-white.png" alt="" class="court-mark court-mark-footwork" />
+        <img src="/images/icons/sports-science-white.png" alt="" class="court-mark court-mark-science" />
+        <img src="/images/decorations/feather-1.png" alt="" class="court-particle court-particle-a" />
+        <img src="/images/decorations/feather-2.png" alt="" class="court-particle court-particle-b" />
+        <img src="/images/decorations/feather-3.png" alt="" class="court-particle court-particle-c" />
+      </div>
+      <img id="flight-trail" src="/images/illustrations/hero-shuttlecock.png" alt="" class="flight-trail" aria-hidden="true" />
 
       {/* 羽毛球飞行动画 */}
       <div id="shuttle" class="shuttle" aria-hidden="true">
         <div class="shuttle-shadow"></div>
+        <canvas id="shuttle-canvas" class="shuttle-canvas"></canvas>
         <svg class="shuttle-svg" viewBox="0 0 36 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           {/* 羽毛 — 5根辐射线 */}
           <line x1="18" y1="28" x2="6" y2="4" stroke="white" stroke-width="1.5" stroke-linecap="round" />
@@ -86,7 +97,7 @@ const formatDate = (date: Date) =>
         <div class="hero-center-line"></div>
         <div class="court-pad relative z-[1]">
           <h1 class="font-display text-2xl md:text-4xl text-white leading-tight mb-3 holo-text" data-focus-anchor>
-            Shuttle Path
+            <a href="/" class="court-title-link">Shuttle Path</a>
           </h1>
           <p class="text-sm md:text-base text-white/80 leading-relaxed mb-1">
             羽毛球教学知识平台
@@ -95,10 +106,10 @@ const formatDate = (date: Date) =>
             从握拍到杀球，从站位到全场步法——系统化的羽毛球知识库与教学日记。
           </p>
           <div class="flex flex-wrap gap-3">
-            <a href="/knowledge/" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 text-white text-xs font-medium rounded-lg border border-white/25 hover:bg-white/25 transition-colors">
+            <a href="/knowledge/" class="court-action-link inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 text-white text-xs font-medium rounded-lg border border-white/25 hover:bg-white/25 transition-colors">
               浏览知识库
             </a>
-            <a href="/lessons/" class="inline-flex items-center gap-1.5 px-4 py-2 text-white/70 text-xs font-medium rounded-lg border border-white/15 hover:text-white hover:border-white/30 transition-colors">
+            <a href="/lessons/" class="court-action-link inline-flex items-center gap-1.5 px-4 py-2 text-white/70 text-xs font-medium rounded-lg border border-white/15 hover:text-white hover:border-white/30 transition-colors">
               教学日记
             </a>
           </div>
@@ -109,10 +120,10 @@ const formatDate = (date: Date) =>
       <div class="court-line-h"></div>
 
       {/* --- 涨球记录（原教学日记）— 全宽 --- */}
-      <a href="/lessons/" class="court-row court-row-lessons group">
+      <div class="court-row court-row-lessons">
         <div class="court-pad">
-          <h2 class="text-lg md:text-xl text-white font-bold mb-2 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
-            涨球记录
+          <h2 class="text-lg md:text-xl text-white font-bold mb-2 holo-text" data-focus-anchor>
+            <a href="/lessons/" class="court-title-link hover:text-white/80 transition-colors">涨球记录</a>
           </h2>
           <p class="text-xs text-white/40 mb-3">原教学日记</p>
           {recentLessons.length > 0 ? (
@@ -120,7 +131,9 @@ const formatDate = (date: Date) =>
               {recentLessons.map((lesson) => (
                 <div class="flex items-baseline gap-3">
                   <time class="text-[10px] text-white/35 flex-shrink-0 tabular-nums">{formatDate(lesson.data.date)}</time>
-                  <span class="text-xs text-white/70">{lesson.data.title}</span>
+                  <a href={`/lessons/${lesson.id}/`} class="lesson-title-link text-xs text-white/70 hover:text-white transition-colors">
+                    {lesson.data.title}
+                  </a>
                 </div>
               ))}
             </div>
@@ -128,7 +141,7 @@ const formatDate = (date: Date) =>
             <p class="text-xs text-white/40">即将更新</p>
           )}
         </div>
-      </a>
+      </div>
 
       {/* ======================================================
           球网 NET
@@ -140,10 +153,10 @@ const formatDate = (date: Date) =>
           ====================================================== */}
 
       {/* --- 知识库 — 全宽 --- */}
-      <a href="/knowledge/" class="court-row court-row-knowledge group">
+      <div class="court-row court-row-knowledge">
         <div class="court-pad">
-          <h2 class="text-lg md:text-xl text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text" data-focus-anchor>
-            知识库
+          <h2 class="text-lg md:text-xl text-white font-bold mb-1 holo-text" data-focus-anchor>
+            <a href="/knowledge/" class="court-title-link hover:text-white/80 transition-colors">知识库</a>
           </h2>
           <p class="text-xs text-white/40 mb-3">Knowledge Base</p>
           <p class="text-xs text-white/55 leading-relaxed">
@@ -153,17 +166,19 @@ const formatDate = (date: Date) =>
             {allKnowledge.length} 篇文章
           </span>
         </div>
-      </a>
+      </div>
 
       {/* --- 前发球线（分隔） --- */}
       <div class="court-line-h"></div>
 
       {/* --- 手法 | 步法 — 中线分割 --- */}
       <div class="court-row court-row-cats">
-        <a href={`/knowledge/?category=strokes`} class="court-half court-half-left court-cat group">
-          <div class="court-pad-left" data-focus-anchor>
-            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text">
-              {knowledgeCats[0].label}
+        <div class="court-half court-half-left court-cat">
+          <div class="court-pad-left">
+            <h3 class="text-base md:text-lg text-white font-bold mb-1 holo-text">
+              <a href="/knowledge/#strokes" class="court-title-link hover:text-white/80 transition-colors" aria-label="进入手法知识库">
+                {knowledgeCats[0].label}
+              </a>
             </h3>
             <p class="text-[10px] text-white/35 uppercase tracking-wider mb-2">{knowledgeCats[0].en}</p>
             <p class="text-xs text-white/50 leading-relaxed mb-2">{knowledgeCats[0].description}</p>
@@ -171,11 +186,13 @@ const formatDate = (date: Date) =>
               {knowledgeCats[0].count > 0 ? `${knowledgeCats[0].count} 篇` : '即将更新'}
             </span>
           </div>
-        </a>
-        <a href={`/knowledge/?category=footwork`} class="court-half court-half-right court-cat group">
+        </div>
+        <div class="court-half court-half-right court-cat">
           <div class="court-pad-right">
-            <h3 class="text-base md:text-lg text-white font-bold mb-1 group-hover:text-white/80 transition-colors holo-text">
-              {knowledgeCats[1].label}
+            <h3 class="text-base md:text-lg text-white font-bold mb-1 holo-text">
+              <a href="/knowledge/#footwork" class="court-title-link hover:text-white/80 transition-colors" aria-label="进入步法知识库">
+                {knowledgeCats[1].label}
+              </a>
             </h3>
             <p class="text-[10px] text-white/35 uppercase tracking-wider mb-2">{knowledgeCats[1].en}</p>
             <p class="text-xs text-white/50 leading-relaxed mb-2">{knowledgeCats[1].description}</p>
@@ -183,17 +200,21 @@ const formatDate = (date: Date) =>
               {knowledgeCats[1].count > 0 ? `${knowledgeCats[1].count} 篇` : '即将更新'}
             </span>
           </div>
-        </a>
+        </div>
       </div>
 
       {/* --- 底部其他（后发球线区域） --- */}
       <div class="court-row court-row-footer">
-        <a href={`/knowledge/?category=sports-science`} class="court-half court-half-left court-cat group">
-          <div class="court-pad-left-sm" data-focus-anchor>
-            <h3 class="text-sm text-white font-bold group-hover:text-white/80 transition-colors holo-text">{knowledgeCats[2].label}</h3>
+        <div class="court-half court-half-left court-cat">
+          <div class="court-pad-left-sm">
+            <h3 class="text-sm text-white font-bold holo-text">
+              <a href="/knowledge/#sports-science" class="court-title-link hover:text-white/80 transition-colors" aria-label="进入运动科学知识库">
+                {knowledgeCats[2].label}
+              </a>
+            </h3>
             <p class="text-[10px] text-white/35 mt-0.5">{knowledgeCats[2].en}</p>
           </div>
-        </a>
+        </div>
         <div class="court-half court-half-right">
           <div class="court-pad-right-sm">
             <p class="text-[10px] text-white/30 text-right">
@@ -295,6 +316,132 @@ const formatDate = (date: Date) =>
   }
 
   /* ============================================
+     场地战术水印 — 把生成素材融入球场表面
+     ============================================ */
+  .court-tactical-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  .court-mark,
+  .court-particle,
+  .flight-trail {
+    position: absolute;
+    display: block;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.08));
+  }
+
+  .court-mark {
+    opacity: 0.045;
+    transform: translateZ(2px);
+  }
+
+  .court-mark-hero {
+    top: 6%;
+    right: -20%;
+    width: 50%;
+    max-width: 280px;
+    transform: rotate(-9deg);
+    opacity: 0.055;
+  }
+
+  .court-mark-strokes {
+    top: 82%;
+    left: 31%;
+    width: 14%;
+    max-width: 76px;
+    transform: rotate(-16deg);
+  }
+
+  .court-mark-footwork {
+    top: 82%;
+    right: 5%;
+    width: 14%;
+    max-width: 76px;
+    transform: rotate(12deg);
+  }
+
+  .court-mark-science {
+    bottom: 1%;
+    right: 8%;
+    width: 12%;
+    max-width: 86px;
+    opacity: 0.035;
+    transform: rotate(5deg);
+  }
+
+  .court-particle {
+    width: 42px;
+    height: 42px;
+    opacity: 0.035;
+  }
+
+  .court-particle-a {
+    top: 34%;
+    right: 8%;
+    transform: rotate(24deg);
+  }
+
+  .court-particle-b {
+    top: 55%;
+    left: 5%;
+    width: 34px;
+    height: 34px;
+    transform: rotate(-30deg);
+  }
+
+  .court-particle-c {
+    bottom: 24%;
+    right: 7%;
+    width: 38px;
+    height: 38px;
+    transform: rotate(42deg);
+  }
+
+  @media (max-width: 767px) {
+    .court-mark {
+      opacity: 0.038;
+    }
+    .court-mark-hero {
+      right: -24%;
+      opacity: 0.045;
+    }
+    .court-particle {
+      opacity: 0.025;
+    }
+  }
+
+  .flight-trail {
+    z-index: 3;
+    width: 180px;
+    height: 180px;
+    opacity: 0;
+    transform-origin: 50% 50%;
+    will-change: transform, opacity;
+  }
+
+  @media (min-width: 768px) {
+    .flight-trail {
+      width: 230px;
+      height: 230px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flight-trail {
+      display: none !important;
+    }
+  }
+
+  /* ============================================
      羽毛球飞行动画
      ============================================ */
   .shuttle {
@@ -302,8 +449,8 @@ const formatDate = (date: Date) =>
     z-index: 4;
     pointer-events: none;
     opacity: 0;
-    width: 32px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     top: 0;
     left: 0;
     will-change: transform, opacity;
@@ -312,9 +459,22 @@ const formatDate = (date: Date) =>
   }
   @media (min-width: 768px) {
     .shuttle {
-      width: 40px;
-      height: 60px;
+      width: 82px;
+      height: 82px;
     }
+  }
+
+  .shuttle-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.28));
+  }
+
+  .shuttle.is-3d .shuttle-canvas {
+    opacity: 1;
   }
 
   .shuttle-svg {
@@ -322,11 +482,15 @@ const formatDate = (date: Date) =>
     height: 100%;
   }
 
+  .shuttle.is-3d .shuttle-svg {
+    display: none;
+  }
+
   .shuttle-shadow {
     position: absolute;
-    bottom: -10px;
+    bottom: 7px;
     left: 50%;
-    width: 28px;
+    width: 36px;
     height: 12px;
     transform: translateX(-50%) translateZ(0);
     background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 70%);
@@ -495,29 +659,29 @@ const formatDate = (date: Date) =>
 
   /* 半场格子 padding（左半场靠左边线，右半场靠右边线） */
   .court-pad-left {
-    padding: 14px 8px 14px 19%;
+    padding: 14px 12px 14px 34%;
   }
   .court-pad-right {
-    padding: 14px 19% 14px 8px;
+    padding: 14px 21% 14px 14px;
   }
   .court-pad-left-sm {
-    padding: 10px 8px 10px 19%;
+    padding: 12px 12px 12px 34%;
   }
   .court-pad-right-sm {
-    padding: 10px 19% 10px 8px;
+    padding: 12px 21% 12px 14px;
   }
   @media (min-width: 768px) {
     .court-pad-left {
-      padding: 28px 14px 28px 19%;
+      padding: 28px 18px 28px 24%;
     }
     .court-pad-right {
-      padding: 28px 19% 28px 14px;
+      padding: 28px 24% 28px 18px;
     }
     .court-pad-left-sm {
-      padding: 16px 14px 16px 19%;
+      padding: 16px 18px 16px 24%;
     }
     .court-pad-right-sm {
-      padding: 16px 19% 16px 14px;
+      padding: 16px 24% 16px 18px;
     }
   }
 
@@ -526,8 +690,31 @@ const formatDate = (date: Date) =>
      ============================================ */
   .court-row {
     position: relative;
-    z-index: 1;
-    transform: translateZ(30px);
+    z-index: 5;
+    pointer-events: none;
+    transform-style: preserve-3d;
+  }
+
+  .court-row a,
+  .court-title-link,
+  .court-action-link,
+  .lesson-title-link {
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .court-title-link {
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .court-title-link,
+  .court-action-link,
+  .lesson-title-link {
+    position: relative;
+    z-index: 40;
+    transform: translateZ(260px);
   }
 
   /* ============================================
@@ -630,6 +817,7 @@ const formatDate = (date: Date) =>
     display: block;
     text-decoration: none;
     color: white;
+    transform-style: preserve-3d;
   }
 
   /* ============================================
@@ -697,6 +885,243 @@ const formatDate = (date: Date) =>
 </style>
 
 <script>
+  type ShuttleFlightState = {
+    speed: number;
+    pitch: number;
+    roll: number;
+  };
+
+  type Shuttle3DController = {
+    setFlight: (state: ShuttleFlightState) => void;
+    resize: () => void;
+  };
+
+  async function createShuttle3D(canvas: HTMLCanvasElement, shuttleEl: HTMLElement): Promise<Shuttle3DController> {
+    const THREE = await import('three');
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    if ('outputColorSpace' in renderer) {
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 20);
+    camera.position.set(0, 0.02, 4.7);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    keyLight.position.set(2.8, 2.6, 4.5);
+    scene.add(keyLight);
+    scene.add(new THREE.AmbientLight(0xffffff, 1.4));
+
+    const shuttleGroup = new THREE.Group();
+    shuttleGroup.scale.setScalar(1.24);
+    scene.add(shuttleGroup);
+
+    const corkMat = new THREE.MeshStandardMaterial({
+      color: 0xf0d9ad,
+      roughness: 0.86,
+      metalness: 0.02,
+    });
+    const corkSideMat = new THREE.MeshStandardMaterial({
+      color: 0xc58f52,
+      roughness: 0.92,
+      metalness: 0.01,
+    });
+    const corkGrainMat = new THREE.MeshBasicMaterial({
+      color: 0x8d6238,
+      transparent: true,
+      opacity: 0.38,
+    });
+    const featherMat = new THREE.MeshBasicMaterial({
+      color: 0xfffbec,
+      transparent: true,
+      opacity: 0.82,
+      side: THREE.DoubleSide,
+      depthWrite: true,
+    });
+    const shaftMat = new THREE.LineBasicMaterial({
+      color: 0xfff3cf,
+      transparent: true,
+      opacity: 0.62,
+    });
+    const barbMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.22,
+    });
+    const cuffMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.9,
+    });
+
+    const cork = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.29, 0.34, 36), corkMat);
+    cork.rotation.z = Math.PI / 2;
+    cork.position.x = 0.48;
+    shuttleGroup.add(cork);
+
+    const corkCap = new THREE.Mesh(new THREE.SphereGeometry(0.28, 36, 18), corkSideMat);
+    corkCap.scale.x = 0.58;
+    corkCap.position.x = 0.72;
+    shuttleGroup.add(corkCap);
+
+    const grainGeo = new THREE.SphereGeometry(0.012, 8, 6);
+    for (let i = 0; i < 18; i++) {
+      const grain = new THREE.Mesh(grainGeo, corkGrainMat);
+      const a = i * 2.399;
+      const x = 0.42 + (i % 6) * 0.048;
+      const r = 0.235 + (i % 3) * 0.008;
+      grain.position.set(x, Math.cos(a) * r * 0.72, Math.sin(a) * r);
+      grain.scale.setScalar(0.6 + (i % 4) * 0.12);
+      shuttleGroup.add(grain);
+    }
+
+    function addRing(x: number, radius: number, tube: number, opacity = 0.86) {
+      const mat = opacity === 0.9 ? cuffMat : cuffMat.clone();
+      mat.opacity = opacity;
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, tube, 8, 64), mat);
+      ring.rotation.y = Math.PI / 2;
+      ring.position.x = x;
+      shuttleGroup.add(ring);
+      return ring;
+    }
+
+    addRing(0.27, 0.23, 0.015, 0.9);
+    addRing(-0.1, 0.31, 0.008, 0.7);
+    addRing(-0.54, 0.46, 0.007, 0.56);
+
+    function addFeather(angle: number, index: number) {
+      const twist = Math.sin(index * 1.7) * 0.035;
+      const point = (x: number, radius: number, extraTwist = 0) => {
+        const a = angle + twist + extraTwist;
+        return new THREE.Vector3(x, Math.cos(a) * radius, Math.sin(a) * radius);
+      };
+      const tangentAt = (t: number) => {
+        const a = angle + twist + t * 0.075;
+        return new THREE.Vector3(0, -Math.sin(a), Math.cos(a));
+      };
+      const centerAt = (t: number) => {
+        const x = 0.22 - 1.34 * t;
+        const radius = 0.22 + 0.38 * Math.pow(t, 0.82);
+        const lift = Math.sin(t * Math.PI) * 0.035;
+        return point(x, radius + lift, t * 0.075);
+      };
+      const widthAt = (t: number) => {
+        const body = Math.pow(Math.sin(t * Math.PI), 0.7) * 0.09;
+        return 0.012 + body + t * 0.025;
+      };
+
+      const positions: number[] = [];
+      const indices: number[] = [];
+      const centers: InstanceType<typeof THREE.Vector3>[] = [];
+      const sections = 9;
+
+      for (let i = 0; i < sections; i++) {
+        const t = i / (sections - 1);
+        const center = centerAt(t);
+        const tangent = tangentAt(t);
+        const width = widthAt(t);
+        const asymmetry = Math.sin(index * 1.19 + t * 2.4) * 0.008;
+        const left = center.clone().addScaledVector(tangent, -(width * 0.92 + asymmetry));
+        const right = center.clone().addScaledVector(tangent, width * 1.08 - asymmetry);
+        centers.push(center);
+        positions.push(left.x, left.y, left.z, right.x, right.y, right.z);
+        if (i < sections - 1) {
+          const base = i * 2;
+          indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2);
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+      const feather = new THREE.Mesh(geometry, featherMat);
+      shuttleGroup.add(feather);
+
+      shuttleGroup.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(centers),
+        shaftMat
+      ));
+
+      for (let i = 2; i <= 6; i += 2) {
+        const t = i / (sections - 1);
+        const center = centers[i];
+        const tangent = tangentAt(t);
+        const width = widthAt(t) * 0.82;
+        shuttleGroup.add(new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints([
+            center.clone().addScaledVector(tangent, -0.01),
+            center.clone().addScaledVector(tangent, -width),
+          ]),
+          barbMat
+        ));
+        shuttleGroup.add(new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints([
+            center.clone().addScaledVector(tangent, 0.01),
+            center.clone().addScaledVector(tangent, width),
+          ]),
+          barbMat
+        ));
+      }
+    }
+
+    for (let i = 0; i < 14; i++) {
+      addFeather((Math.PI * 2 * i) / 14, i);
+    }
+
+    const flight: ShuttleFlightState = { speed: 0.25, pitch: 0, roll: 0 };
+    const current: ShuttleFlightState = { ...flight };
+    let startedAt = 0;
+    let spin = 0;
+
+    function resize() {
+      const width = Math.max(1, canvas.clientWidth || shuttleEl.clientWidth || 96);
+      const height = Math.max(1, canvas.clientHeight || shuttleEl.clientHeight || 96);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    }
+
+    function render(now = performance.now()) {
+      if (!startedAt) startedAt = now;
+      const elapsed = (now - startedAt) / 1000;
+      current.speed += (flight.speed - current.speed) * 0.08;
+      current.pitch += (flight.pitch - current.pitch) * 0.08;
+      current.roll += (flight.roll - current.roll) * 0.08;
+
+      spin += 0.018 + current.speed * 0.055;
+      shuttleGroup.rotation.x = spin;
+      shuttleGroup.rotation.y = -0.5 + current.roll * 0.35 + Math.sin(elapsed * 1.4) * 0.025;
+      shuttleGroup.rotation.z = -0.16 + current.pitch * 0.34 + Math.sin(elapsed * 2.3) * 0.025;
+      shuttleGroup.position.y = Math.sin(elapsed * 2.1) * 0.025;
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(render);
+    }
+
+    resize();
+    shuttleEl.classList.add('is-3d');
+    window.addEventListener('resize', resize, { passive: true });
+    render();
+
+    return {
+      setFlight(next: ShuttleFlightState) {
+        flight.speed = next.speed;
+        flight.pitch = next.pitch;
+        flight.roll = next.roll;
+      },
+      resize,
+    };
+  }
+
   // ============================================
   // 滚动动画 — 3D 转播视角 + 镜头升降
   // CSS sticky 固定视口，GSAP ScrollTrigger 驱动动画
@@ -805,9 +1230,22 @@ const formatDate = (date: Date) =>
 
       const shadow = shuttle.querySelector('.shuttle-shadow') as HTMLElement;
       const svgEl = shuttle.querySelector('.shuttle-svg') as HTMLElement;
+      const shuttleCanvas = shuttle.querySelector('#shuttle-canvas') as HTMLCanvasElement | null;
       const spotlightEl = document.getElementById('spotlight');
+      const trailEl = document.getElementById('flight-trail');
       const vignetteEl = courtEl!.querySelector('.court-vignette') as HTMLElement;
       const contentSections = [rows.hero, rows.lessons, rows.knowledge, rows.cats, rows.footer].filter(Boolean);
+      const flightState: ShuttleFlightState = { speed: 0.25, pitch: 0, roll: 0 };
+      let shuttle3D: Shuttle3DController | null = null;
+      const syncFlight = () => shuttle3D?.setFlight(flightState);
+      if (shuttleCanvas) {
+        createShuttle3D(shuttleCanvas, shuttle).then((controller) => {
+          shuttle3D = controller;
+          syncFlight();
+        }).catch((error) => {
+          console.warn('3D 羽毛球初始化失败，使用 2D 回退', error);
+        });
+      }
 
       // ====== 段落定义 ======
       type FocusSeg = { type: 'focus'; section: HTMLElement; sx: number; dur: number; scale?: number };
@@ -816,7 +1254,7 @@ const formatDate = (date: Date) =>
       type Segment = FocusSeg | TransSeg | ExitSeg;
 
       const segs: Segment[] = [
-        { type: 'focus',      section: rows.hero,      sx: 48, dur: 3.5 },
+        { type: 'focus',      section: rows.hero,      sx: isMobile ? 74 : 70, dur: 3.5 },
         { type: 'transition', dur: 3 },
         { type: 'focus',      section: rows.lessons,   sx: 56, dur: 3.5 },
         { type: 'transition', dur: 3 },
@@ -824,9 +1262,9 @@ const formatDate = (date: Date) =>
         { type: 'transition', dur: 3 },
         // Cats / Footer 的 anchor（court-pad-left）是半宽内容块，scale 太大会偏离视口中心
         // 桌面视口宽裕用 1.35；移动端用 1.1 让两半内容都能放得下
-        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5, scale: isMobile ? 1.1 : 1.35 },
+        { type: 'focus',      section: rows.cats,      sx: 50, dur: 3.5, scale: isMobile ? 0.78 : 1.22 },
         { type: 'transition', dur: 3 },
-        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5, scale: isMobile ? 1.1 : 1.35 },
+        { type: 'focus',      section: rows.footer,    sx: 30, dur: 3.5, scale: isMobile ? 0.78 : 1.22 },
         { type: 'exit',       dur: 1.5 },
       ];
 
@@ -835,10 +1273,11 @@ const formatDate = (date: Date) =>
       const courtW = courtEl!.offsetWidth;
       function courtX(pct: number) { return courtW * pct / 100; }
 
-      gsap.set(shuttle, { y: heroY, x: courtX(48), xPercent: -50, scale: 1, rotation: 0, force3D: true });
+      gsap.set(shuttle, { y: heroY, x: courtX(isMobile ? 74 : 70), xPercent: -50, scale: 1, rotation: 0, force3D: true });
       gsap.set(svgEl, { opacity: 1 });
       gsap.set(shadow, { scaleX: 1, scaleY: 1, opacity: 0.2 });
-      if (spotlightEl) gsap.set(spotlightEl, { y: heroY, x: courtX(48), xPercent: -50, yPercent: -50, opacity: 0.6, scale: 1, force3D: true });
+      if (spotlightEl) gsap.set(spotlightEl, { y: heroY, x: courtX(isMobile ? 74 : 70), xPercent: -50, yPercent: -50, opacity: 0.6, scale: 1, force3D: true });
+      if (trailEl) gsap.set(trailEl, { y: heroY, x: courtX(isMobile ? 74 : 70), xPercent: -50, yPercent: -50, scale: 0.6, rotation: -8, opacity: 0, force3D: true });
 
       // 预计算每个聚焦段的校准后 ty（在变换后 anchor 视觉居中视口）
       const calibratedTy = new Map<HTMLElement, number>();
@@ -880,6 +1319,17 @@ const formatDate = (date: Date) =>
         // 球光晕
         tl.to(svgEl, { opacity: 0.3, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
+        tl.to(flightState, {
+          speed: 0.18,
+          pitch: 0.08,
+          roll: 0,
+          duration: dur * 0.5,
+          ease: 'power2.out',
+          onUpdate: syncFlight,
+        }, pos);
+
+        if (trailEl) tl.to(trailEl, { opacity: 0, duration: dur * 0.3, ease: 'power2.out' }, pos);
+
         // 球影
         tl.to(shadow, { scaleX: 1, scaleY: 1, opacity: 0.35, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
@@ -891,6 +1341,7 @@ const formatDate = (date: Date) =>
 
         // 内容区 opacity
         contentSections.forEach(s => {
+          tl.set(s, { z: s === section ? 220 : -220, zIndex: s === section ? 20 : 1, pointerEvents: s === section ? 'auto' : 'none' }, pos);
           tl.to(s, { opacity: s === section ? 1 : 0.15, duration: dur * 0.5, ease: 'power2.out' }, pos);
         });
       }
@@ -918,6 +1369,37 @@ const formatDate = (date: Date) =>
 
         tl.to(svgEl, { opacity: 1, duration: dur * 0.4, ease: 'power2.out' }, pos);
 
+        tl.to(flightState, {
+          speed: 1,
+          pitch: -0.35,
+          roll: peakRot * Math.PI / 120,
+          duration: dur * 0.4,
+          ease: 'power1.out',
+          onUpdate: syncFlight,
+        }, pos);
+        tl.to(flightState, {
+          speed: 0.55,
+          pitch: 0.18,
+          roll: 0,
+          duration: dur * 0.4,
+          ease: 'power1.in',
+          onUpdate: syncFlight,
+        }, pos + dur * 0.4);
+
+        if (trailEl) {
+          tl.set(trailEl, {
+            y: peakY + 26,
+            x: courtX(midX),
+            xPercent: -50,
+            yPercent: -50,
+            scale: transIdx % 2 === 0 ? 0.62 : 0.56,
+            rotation: peakRot - 12,
+            force3D: true,
+          }, pos);
+          tl.to(trailEl, { opacity: 0.18, duration: dur * 0.12, ease: 'power2.out' }, pos);
+          tl.to(trailEl, { opacity: 0, scale: 0.92, duration: dur * 0.45, ease: 'power2.out' }, pos + dur * 0.16);
+        }
+
         tl.to(shadow, { scaleX: 2, scaleY: 1.5, opacity: 0.08, duration: dur * 0.5, ease: 'power2.out' }, pos);
 
         // 聚光灯跟随球：上升到峰值，再下降到下一站
@@ -935,7 +1417,7 @@ const formatDate = (date: Date) =>
 
       // ====== 构建时间线 ======
       let prevSection: HTMLElement | null = null;
-      let prevSx = 48;
+      let prevSx = isMobile ? 70 : 62;
       let transIdx = 0;
 
       for (let i = 0; i < segs.length; i++) {
@@ -963,7 +1445,10 @@ const formatDate = (date: Date) =>
 
           tl.to(shuttle, { opacity: 0, scale: 0.4, rotation: 20, duration: dur * 0.7, ease: 'power2.in' }, pos);
 
+          tl.to(flightState, { speed: 1.2, pitch: -0.2, roll: 0.35, duration: dur * 0.7, ease: 'power2.in', onUpdate: syncFlight }, pos);
+
           if (spotlightEl) tl.to(spotlightEl, { opacity: 0, scale: 0.2, duration: dur * 0.7, ease: 'power2.in' }, pos);
+          if (trailEl) tl.to(trailEl, { opacity: 0, duration: dur * 0.4, ease: 'power2.out' }, pos);
 
           if (vignetteEl) tl.to(vignetteEl, { opacity: 0, duration: dur, ease: 'power2.out' }, pos);
 
